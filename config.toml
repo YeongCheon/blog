@@ -1,0 +1,4 @@
+baseURL = "http://yeongcheon.github.io/"
+languageCode = "en-us"
+title = "YeongCheon Blog"
+theme = "ananke"
