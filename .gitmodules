@@ -5,3 +5,6 @@
 	path = public
 	url = git@github.com:YeongCheon/yeongcheon.github.io.git
 	branch = master
+[submodule "themes/m10c"]
+	path = themes/m10c
+	url = https://github.com/vaga/hugo-theme-m10c.git
