@@ -3,6 +3,7 @@ languageCode = "ko-ko"
 title = "YeongCheon Tech Blog"
 theme = "m10c"
 pygmentsCodeFences=true
+googleAnalytics = "UA-135478508-1"
 
 [params]
   author = "YeongCheon Kim"
