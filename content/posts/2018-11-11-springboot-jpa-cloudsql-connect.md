@@ -1,8 +1,8 @@
 ---
 layout: post
 title:  "appengine + springboot + kotlin + jpa + cloudsql 연동하기"
-date:   2018-11-11 19:00:00 +0900
-categories: spring jpa gae
+date:   "2018-11-11 19:00:00 +0900"
+tags: ["spring", "jpa", "gae"]
 ---
 
 회사에서 새로 시작하는 API 서버 개발에 아래와 같은 환경을 적용하기로 했다.

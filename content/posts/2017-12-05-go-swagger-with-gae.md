@@ -2,7 +2,7 @@
 layout: post
 title:  "Google App Engine(GAE)에서 go swagger server 실행하기"
 date:   2017-12-05 17:00:00 +0900
-categories: go swagger GAE GCP
+tags: [go, swagger, GAE, GCP]
 ---
 
 # Intro

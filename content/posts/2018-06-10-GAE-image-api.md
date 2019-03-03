@@ -2,7 +2,7 @@
 layout: post
 title:  "Google App Engine Image API 삽질 후기"
 date:   2018-06-10 12:00:00 +0900
-categories: GCP GAE golang
+tags: [GCP, GAE, golang]
 ---
 
 오늘은 GAE에서 제공하는 [Image API](https://cloud.google.com/appengine/docs/standard/go/images/)를 사용하면서 겪은 어려움과 후기를 공유하고자 한다.

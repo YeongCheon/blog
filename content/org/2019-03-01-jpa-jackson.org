@@ -1,13 +1,14 @@
-#+hugo_base_dir: ../../
-#+hugo_section: ./posts
+#+HUGO_BASE_DIR: ../../
+#+HUGO_SECTION: ./posts
 
-#+hugo_weight: auto
-#+hugo_auto_set_lastmod: t
+#+HUGO_WEIGHT: auto
+#+HUGO_AUTO_SET_LASTMOD: t
+#+HUGO_TAGS: json jackson jpa kotlin
 
 #+TITLE: jackson을 이용해 json 변환 시 JPA entity의 id값만 추출하기
 #+LAYOUT: post
 #+AUTHOR: yeongcheon
-#+TAGS: json jackson jpa kotlin
+#+DATE: "2019-03-01 19:00:00 +0900"
 
 * 들어가며
   REST API 서버를 java언어에서 사용되는 대표적인 json(또는 xml, yaml, etc...) 라이브러리인 [[https://github.com/FasterXML/jackson][jackson]] 은 kotlin에서도 사용이 가능하다. 

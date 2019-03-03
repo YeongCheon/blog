@@ -2,7 +2,7 @@
 layout: post
 title:  "Googlde App Engine(GAE) datastore index 관련 에러 해결하기"
 date:   2018-04-29 21:30:00 +0900
-categories: GCP GAE
+tags: [GCP, GAE]
 ---
 
 ## 들어가며

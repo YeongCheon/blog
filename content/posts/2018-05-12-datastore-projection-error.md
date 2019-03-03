@@ -2,7 +2,7 @@
 layout: post
 title:  "datastore에서 projection query 실행 시 time.Time이 int64로 반환되는 문제 해결하기"
 date:   2018-05-12 13:00:00 +0900
-categories: GCP GAE golang
+tags: [GCP, GAE, golang]
 ---
 
 ## 요구사항

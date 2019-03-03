@@ -2,7 +2,7 @@
 layout: post
 title:  "emacs 단축키 목록"
 date:   2017-12-26 16:00:00 +0900
-categories: emacs editor
+tags: [emacs, editor]
 ---
 
 # emacs 단축키 목록

@@ -2,7 +2,7 @@
 layout: post
 title:  "emacs에서 커서이동 없이 buffer 전체 복사하기"
 date:   2018-09-27 21:00:00 +0900
-categories: emacs
+tags: [emacs]
 ---
 
 보편적인 현대 에디터에서 `ctrl-a` `ctrl-c`, 그러니까 현재 편집중인 파일의 모든 내용을 선택해서 복사하는 방법을 이맥스에서 사용하는 방법을 알아보자.

@@ -2,7 +2,7 @@
 layout: post
 title:  "emacs 명령어 목록"
 date:   2018-02-04 00:30:00 +0900
-categories: emacs editor
+tags: [emacs, editor]
 ---
 
 # emacs 명령어 목록

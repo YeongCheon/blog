@@ -2,7 +2,7 @@
 layout: post
 title:  "emacs에서 tslint 이용하기"
 date:   2018-09-21 12:00:00 +0900
-categories: emacs typescript angular
+tags: [emacs, typescript, angular]
 ---
 
 나는 angular6를 이용해 웹 프로젝트를 진행하는걸 선호하는데 툴은 emacs를 주로 쓰고있다(OS는 ubuntu). vscode를 쓸까 했는데 그냥 이맥스가 좋아서(이유는 없다) 이맥스에 꾸역꾸역 개발환경을 구축했다. [tide](https://github.com/ananthakumaran/tide)를 이용해서 환경을 구성했는데 [tslint](https://github.com/ananthakumaran/tide)가 작동하지 않아서 잠깐 했던 삽질을 여기에 짤막하게 기록한다.

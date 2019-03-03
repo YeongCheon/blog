@@ -1,7 +1,9 @@
 +++
 title = "jackson을 이용해 json 변환 시 JPA entity의 id값만 추출하기"
 author = ["yeongcheon"]
-lastmod = 2019-03-02T00:32:39+09:00
+date = 2019-03-01T19:00:00+09:00
+lastmod = 2019-03-03T18:34:19+09:00
+tags = ["json", "jackson", "jpa", "kotlin"]
 draft = false
 +++
 
