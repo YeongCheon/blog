@@ -1,4 +1,4 @@
-baseURL = "http://yeongcheon.github.io/"
+baseURL = "https://yeongcheon.github.io/"
 languageCode = "ko-ko"
 title = "YeongCheon Tech Blog"
 theme = "m10c"
