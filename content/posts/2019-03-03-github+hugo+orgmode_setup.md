@@ -1,8 +1,8 @@
 +++
-title = "hugo + org-mode + github 를 이용해 블로그 셋팅하기"
+title = "hugo + org-mode + github를 이용해 블로그 셋팅하기"
 author = ["yeongcheon"]
 date = 2019-03-03T19:00:00+09:00
-lastmod = 2019-03-03T22:28:36+09:00
+lastmod = 2019-03-07T22:23:04+09:00
 tags = ["hugo", "github", "org-mode", "blog"]
 draft = false
 +++
@@ -44,7 +44,7 @@ org-mode로 hugo에 손쉽게 글을 등록하기 위해서는 [ox-hugo](https:/
 간단하게 각 단계를 나열하면 아래와 같다.
 
 -   org 확장자 파일을 만들어 글을 작성한다.
--   org 확장자를 md 파일로 export 한다.(`C-e C-e H H`)
+-   org 확장자를 md 파일로 export 한다.(`C-c C-e H H`)
 
 별다른 설정 없이 [hugo 공식 가이드](https://gohugo.io/getting-started/quick-start/)를 따랐다면 아마 디렉토리 구조는 아래와 비슷할 것이다.
 
@@ -107,7 +107,7 @@ HELLO WORLD
 
 `#+HUGO` 로 시작하는 라인은 ox-hugo에서 사용하는 특별한 설정이다. 다른 `#+TITLE` 같은 라인은 평범한 orgmode용 메타데이터라고 생각하면 된다.
 이제 위의 파일을 export하면 org 파일과 동일한 파일명에 확장자만 .md인 파일이 `content/posts` 에 생길것이다.
-이맥스 단축키는 `C-e C-e H H` 다.(~~단축키 주제에 길다~~)
+이맥스 단축키는 `C-c C-e H H` 다.(~~단축키 주제에 길다~~)
 파일 내용은 아래와 같다.
 
 ```markdown
