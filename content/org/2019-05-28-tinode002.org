@@ -65,3 +65,38 @@ $GOPATH/bin/server -config=$GOPATH/src/github.com/tinode/chat/server/tinode.conf
 #+END_SRC
 
 실행 후 터미널에 *Listening for client HTTP connections on [:6060]* 메세지가 뜬다면 성공이다.
+
+* 부록 - Go Modules를 이용해서 설치하기
+
+  *go 1.11* 버전 이후로는 *Go Modules* 라는 개념을 제공한다. 앞으로 Go는 기존의 =$GOPATH= 를 이용한 방법 대신 Go Module를 이용해서 패키지 관리를 한다고 한다. Go Modules에 대한 자세한 내용은 [[https://velog.io/@kimmachinegun/Go-Go-Modules-%25EC%2582%25B4%25ED%258E%25B4%25EB%25B3%25B4%25EA%25B8%25B0-7cjn4soifk][여기]]와 [[https://blog.golang.org/using-go-modules][여기]]를 참고하자. 
+
+  *참고로 이 부록은 위에서 설명한 가이드를 모두 따라하고 데이터베이스 관련 셋팅이 모두 끝났다고 가정한다.*
+
+** Go modules 한방 스크립트
+
+   쉘 커맨드 명령어를 우선 한번에 작성한 후 한줄 한줄 설명하도록 하겠다.
+
+#+BEGIN_SRC shell
+git clone https://github.com/tinode/chat
+cd chat/server
+go mod init github.com/YeongCheon/chat/server
+go build -tags mysql
+mkdir static
+./server -config=./tinode.conf
+#+END_SRC
+
+
+1, 2번 라인은 별도로 설명하지 않겠다.
+
+*3번 라인이 제일 중요하다.*
+go.mod 파일을 만드는 명령어인데 *init 뒤에 붙는 패키지 경로를 자신이 정한 고유의 경로를 써줘야 한다.* 처음에 아무생각 없이 =github.com/tinode/chat/server= 를 입력한다면 아래와 같은 에러메세지를 볼 수 있다.
+
+#+BEGIN_SRC
+can't load package: package github.com/tinode/chat/server: unknown import path "github.com/tinode/chat/server": ambiguous import: found github.com/tinode/chat/server in multiple modules:
+	github.com/tinode/chat/server (/~~~~~~~~~~~~~~~~~~~~~~~~/chat/server)
+	github.com/tinode/chat v0.15.14 (/~~~~~~~~/go/pkg/mod/github.com/tinode/chat@v0.15.14/server)
+#+END_SRC
+
+init 작업이 끝나면 의존성 패키지 목록이 이쁘게 정리된 =go.mod= 파일과 =go.sum= 파일을 볼 수 있다.
+
+그 이후의 작업은 =go install= 명령어를 이용해 설치했을때와 동일하다. =go build= 명령어 실행 시 *-tags=mysql* 을 붙여서 mysql을 사용하는 바이너리 파일을 생성한 후 동일한 위치에 statics 폴더를 생성한다. 그리고 마지막으로 바이너리 파일 실행 시 *-config=./tinode.conf* 옵션을 추가하면 정상적으로 동작한다.이 때 혹시 동작하지 않는다면  conf파일 안의 설정값을 확인해보자.
