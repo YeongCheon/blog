@@ -16,6 +16,7 @@ tags: [emacs, editor]
 * `find-name-dired` : 특정 폴더 아래에서 지정된 파일이름 패턴과 동일한 목록을 뽑아 dired모드로 출력해주는 명령어. 폴더 아래의 모든 파일에서 `replace` 명령어를 수행할 때 유용하다. [링크](https://www.gnu.org/software/emacs/manual/html_node/emacs/Dired-and-Find.html)
 
   [특정폴더 아래의 모든 파일(하위폴더 포함)에서 replace를 실행하는 방법](https://stackoverflow.com/a/271136/5961346)
+  
   1. `M-x find-name-dired` 명령어 실행 후 폴더 지정, 파일패턴 지정
   2. `t`를 눌러서 dired 모드에 있는 모든 목록을 선택
   3. `Q`를 눌러서 `Query-Replace in Files...` 명령 실행.
