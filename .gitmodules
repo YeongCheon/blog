@@ -8,3 +8,9 @@
 [submodule "themes/m10c"]
 	path = themes/m10c
 	url = https://github.com/vaga/hugo-theme-m10c.git
+[submodule "themes/whiteplain-dark"]
+	path = themes/whiteplain-dark
+	url = https://github.com/taikii/whiteplain-dark.git
+[submodule "themes/whiteplain"]
+	path = themes/whiteplain
+	url = https://github.com/taikii/whiteplain.git
