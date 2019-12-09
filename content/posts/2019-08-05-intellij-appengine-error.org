@@ -1,15 +1,9 @@
-#+HUGO_BASE_DIR: ../../
-#+HUGO_SECTION: ./posts
-#+HUGO_DRAFT: false
-
-#+HUGO_WEIGHT: auto
-#+HUGO_AUTO_SET_LASTMOD: t
-#+HUGO_TAGS: intellij appengine
-
 #+TITLE: IntelliJ 업데이트 후 appengine local 실행 이슈 해결하기
 #+LAYOUT: post
 #+AUTHOR: yeongcheon
 #+DATE: "2019-08-05 23:20:00 +0900"
+#+TAGS[]: intellij appengine
+#+DRAFT: false
 
 IntelliJ를 쓰기 시작한지 아직 1년도 안됐지만 거의 분기(?)마다 자동 업데이트가 되는듯 싶은데 이때마다 잘 쓰고있던 appengine local server가 제대로 동작하지 않아서 화가 났었는데 최근에 명확한 솔루션을 찾았기에 이를 기록하고자 한다.
 
