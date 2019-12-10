@@ -1,15 +1,9 @@
-#+HUGO_BASE_DIR: ../../
-#+HUGO_SECTION: ./posts
-#+HUGO_DRAFT: false
-
-#+HUGO_WEIGHT: auto
-#+HUGO_AUTO_SET_LASTMOD: t
-#+HUGO_TAGS: emacs 세벌식
-
 #+TITLE: 이맥스 폰트, 세벌식 셋팅하기
 #+LAYOUT: post
 #+AUTHOR: yeongcheon
-#+DATE: "2019-06-19 00:00:00 +0900"
+#+DATE: 2019-06-19 00:00:00 +0900
+#+TAGS[]: emacs 세벌식
+#+DRAFT: false
 
 
 아래의 내용을 =.emacs= 파일 안에 복붙해주자. 세벌식 버전은 최종이 아닌 390버전이다.

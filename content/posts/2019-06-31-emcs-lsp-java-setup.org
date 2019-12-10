@@ -1,15 +1,9 @@
-#+HUGO_BASE_DIR: ../../
-#+HUGO_SECTION: ./posts
-#+HUGO_DRAFT: false
-
-#+HUGO_WEIGHT: auto
-#+HUGO_AUTO_SET_LASTMOD: t
-#+HUGO_TAGS: emacs java lsp
-
 #+TITLE: 이맥스에서 lsp-mode를 이용해 자바 개발환경 셋팅하기
 #+LAYOUT: post
 #+AUTHOR: yeongcheon
-#+DATE: "2019-06-30 21:00:00 +0900"
+#+DATE: 2019-06-30 21:00:00 +0900
+#+TAGS[]: emacs java lsp
+#+DRAFT: false
 
 이맥스에서 자바 개발환경을 셋팅해보자. 우선 기본적으로 이맥스와 자바, gradle 등등은 설치가 되어있다고 가정한다. 포스트 작성 기준은 아래와 같다.
 

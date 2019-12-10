@@ -1,7 +1,6 @@
 #+TITLE: IntelliJ 업데이트 후 appengine local 실행 이슈 해결하기
-#+LAYOUT: post
 #+AUTHOR: yeongcheon
-#+DATE: "2019-08-05 23:20:00 +0900"
+#+DATE: 2019-08-05 23:20:00 +0900
 #+TAGS[]: intellij appengine
 #+DRAFT: false
 
