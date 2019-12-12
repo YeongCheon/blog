@@ -1,0 +1,8 @@
+#+TITLE: query dsl 클래스 이름의 중요성
+#+SUBTITLE: query dsl 클래스 작성 시 Impl 클래스 이름의 중요성
+#+AUTHOR: yeongcheon
+#+DATE: 2019-12-12 00:00:00 +0900
+#+TAGS[]: JPA queryDSL hibernate kotlin springBoot
+#+DRAFT: true
+
+JPA에서 query DSL 클래스 구현 시 클래스 이름의 중요성을 알아보자.
