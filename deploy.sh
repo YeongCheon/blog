@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# If a command fails then the deploy stops
+set -e
+
 echo -e "\033[0;32mDeploying updates to GitHub...\033[0m"
 
 # Build the project.
