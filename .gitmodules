@@ -1,10 +1,6 @@
 [submodule "themes/ananke"]
 	path = themes/ananke
 	url = https://github.com/budparr/gohugo-theme-ananke.git
-[submodule "public"]
-	path = public
-	url = git@github.com:YeongCheon/yeongcheon.github.io.git
-	branch = master
 [submodule "themes/m10c"]
 	path = themes/m10c
 	url = https://github.com/vaga/hugo-theme-m10c.git
@@ -14,3 +10,7 @@
 [submodule "themes/whiteplain"]
 	path = themes/whiteplain
 	url = https://github.com/taikii/whiteplain.git
+[submodule "public"]
+	path = public
+	url = git@github.com:YeongCheon/yeongcheon.github.io.git
+	branch = master
