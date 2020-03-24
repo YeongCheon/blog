@@ -5,7 +5,7 @@
 #+TAGS[]: protobuffers proto3 google
 #+DRAFT: true
 
-매번 영어문서 보기 빡쳐서 직접 번역기 돌려가며 쓰는 번역본. 영어를 잘 못하기 때문에 오역이 있을 수(+분명히+) 있습니다.
+매번 [[https://developers.google.com/protocol-buffers/docs/proto3#simple][영어문서]] 보기 빡쳐서 직접 번역기 돌려가며 쓰는 번역본. 영어를 잘 못하기 때문에 오역이 있을 수(+분명히+) 있습니다.
 
 * Language Guide(proto3)
 ** Defining A Message Type
