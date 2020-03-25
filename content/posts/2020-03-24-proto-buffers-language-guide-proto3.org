@@ -16,8 +16,8 @@
    
    message SearchRequest {
      string query = 1;
-	    int32 page_number = 2;
-		   int32 result_per_page = 3;
+     int32 page_number = 2;
+     int32 result_per_page = 3;
    }
 
    #+END_SRC
@@ -25,10 +25,53 @@
    + 첫 번째 줄은 이 파일이 *proto3* 문법을 사용하고 있음을 나타냅니다. 만약 이 구문이 없으면 컴파일러는 이 파일이 [[https://developers.google.com/protocol-buffers/docs/proto][proto2]] 문법을 사용하고 있다고 인식합니다. 이 구문은 무조건 파일의 제일 첫 번째 줄에 와야하며 앞에 공백이나 주석조차 허용하지 않습니다.
    + `SearchRequest` 메세지는 세 가지 필드를 정의하고 있습니다(이름/값 쌍), 각 필드는 이름과 타입으로 이루어져 있습니다.
 ** Specifying Field Types
-   위 예제에서 모든 필드는 [[https://developers.google.com/protocol-buffers/docs/proto3#scalar][스칼라 타입]]입니다(int32 타입 2개, string 타입 1개). 그러나 우리는 [[https://developers.google.com/protocol-buffers/docs/proto3#enum][열거형]]이나 다른 메세지를 타입으로 지정할 수 있습니다.
+   위 예제에서 모든 필드는 [[https://developers.google.com/protocol-buffers/docs/proto3#scalar][스칼라 타입]]입니다(int32 타입 2개, string 타입 1개). 그렇지만 [[https://developers.google.com/protocol-buffers/docs/proto3#enum][열거형]]이나 다른 메세지를 타입으로 지정할 수 있습니다.
 ** Assigning Field Numbers
    위에서 봤듯이, 각 필드는 저마다 *고유한 번호*를 가지고 있습니다. 이 필드 번호들은 메세지를 [[https://developers.google.com/protocol-buffers/docs/encoding][바이너리 포맷]]으로 변환할 때 사용되므로 한번 정의한 이 후 절대로 바꿔서는 안됩니다. 인코딩 시 필드 번호는 1-15 범위까지는 1 바이트, 16에서 2047 범위까지는 2 바이트를 사용합니다(자세한 내용은 [[https://developers.google.com/protocol-buffers/docs/encoding#structure][proto Buffer Encoding]]에서 확인). 그러므로 자주 발생하는 메세지 요소들은 1-15 범위에 할당하는게 좋습니다. 나중에 빈번하게 접근할 요소가 추가될 수 있으므로 미리 여유 공간을 확보해 놓으세요.
 
    지정할 수 있는 가장 작은 필드 번호는 1, 가장 큰 필드 번호는 2^29 - 1 또는 536870911 입니다. 그리고 19000-19999 범위의 필드 번호는 프로토콜 버퍼 구현을 위해 미리 예약되어 있으므로 사용할 수 없습니다. 만약 당신의 `.proto` 파일에서 예약된 필드 번호 중 하나를 사용하면 프로토콜 버퍼 컴파일러는 에러를 반환할 것입니다. 이와 마찬가지로, 이전에 [[https://developers.google.com/protocol-buffers/docs/proto3#reserved][예약된]] 필드 번호도 사용할 수 없습니다.
 ** Specifying Field Rules
+   메세지 필드는 다음 중 하나일 수 있습니다,
 
+   + 단일 필드: 잘 디자인 된 메세지는 0개 또는 하나의 단일 필드 형식을 갖습니다(하나 이하). 그리고 단일 필드는 프로토 버퍼3 문법에서 기본 필드입니다.
+   + 반복 필드: 이 필드는 0을 포함해서 여러번 반복될 수 있습니다. 반복되는 값은 순서는 유지됩니다.
+
+   `proto3` 에서, 스칼라 숫자 타입 `반복` 필드는 기본적으로 `압축(packed)` 인코딩을 사용합니다.
+
+   `압축` 인코딩에 대해서는 [[https://developers.google.com/protocol-buffers/docs/encoding#packed][Protocol Buffer Encoding]] 에서 자세히 알아볼 수 있습니다.
+** Adding More Message Types
+   여러개의 메세지 타입을 하나의 `.proto` 파일 안에 정의할 수 있습니다. 만약 당신이 다수의 서로 연관된 메세지를 정의할 때 매우 유용할 것입니다. 예를 들어, `SearchResponse` 메세지를 응답 형식으로 작성하고 싶다면 같은 `.proto` 파일에 추가할 수 있습니다.
+   #+BEGIN_SRC proto
+   message SearchRequest {
+     string query = 1;
+     int32 page_number = 2;
+     int32 result_per_page = 3;
+   }
+   
+   Message Searchresponse {
+     ...
+   }
+
+   #+END_SRC
+** Adding Comments
+   C/C++ 처럼 `//` 또는 `/* ... */` 스타일의 주석 문법을 `.proto` 파일에서 사용할 수 있습니다.
+   #+BEGIN_SRC proto
+   /* SearchRequest represents a search query, with pagination options to
+    * indicate which results to include in the response. */
+
+   message SearchRequest {
+     string query = 1;
+     int32 page_number = 2;  // Which page number do we want?
+     int32 result_per_page = 3;  // Number of results to return per page.
+   }
+
+   #+END_SRC
+** Reserved Fields
+   필드를 완전히 삭제 또는 주석 처리하여 메세지를 업데이트 하면 향후 사용자가 메세지를 업데이트 할 때  필드 번호를 재사용 할 수 있습니다. 이는 만약 이전 버전의 `.proto` 파일을 사용할 때 데이터 손상이나 개인정보 문제 등등 심각한 문제가 발생할 수 있습니다. 삭제된 필드의 필드 번호(또는 json 직렬화 문제를 일으킬 수 있는 이름)를 예약하도록 지정하면 이러한 문제가 발생하는 것을 피할 수 있습니다. 만약 향후 사용자가 예약된 필드 식별자^(역자 주: 필드 번호 또는 이름)를 사용하려고 할 경우 프로토콜 버퍼 컴파일러가 경고를 해 줄 것입니다.
+   #+BEGIN_SRC proto
+   message Foo {
+     reserved 2, 15, 9 to 11;
+     reserved "foo", "bar";
+   }
+   #+END_SRC
+   동일한 `예약` 구문에서는 필드 이름과 이름 번호를 혼용할 수 없습니다.
