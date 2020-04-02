@@ -264,3 +264,37 @@
    알 수 없는 필드는 올바른 규격의 직렬화 된 프로토콜 버퍼를 파싱할 때 인식하지 못하는 필드를 의미합니다. 예를 들어, 구버전의 바이너리 데이터를 새로 추가된 필드와 함께 새 바이너리 파일로 전송할 때, 새로 추가된 필드는 구버전의 바이너리 데이터에선 인식하지 못합니다.
 
    원래 proto3 메세지는 파싱할 때 알 수 없는 필드를 항상 폐기하도록 설계되었지만 버전 3.5부터는 proto2 동작과 일치하도록 알 수 없는 필드를 계속 보존하도록 변경되었습니다. 3.5 버전 이상에서는 파싱과 직렬화 출력 시 알 수 없는 필드가 계속 보존됩니다.
+** Any
+   ~Any~ 메세지 타입을 사용하면 특정 메세지 타입을 .proto 파일에서 알지 못해도 그 메세지 타입을 필드로 사용할 수 있습니다. 메세지를 직렬화 할 때 ~Any~ 타입은 임의의 ~bytes~ 타입으로 변환된 후 해당 데이터를 가르키는 URL을 전역 고유 식별자로 갖습니다. ~Any~ 타입을 사용할 때는 ~google/protobuf/any.proto~ 를 [[https://developers.google.com/protocol-buffers/docs/proto3#other][import]]하여야 합니다.
+	#+BEGIN_SRC proto
+    import "google/protobuf/any.proto";
+
+    message ErrorStatus {
+      string message = 1;
+      repeated google.protobuf.Any details = 2;
+    }
+	#+END_SRC
+	기본적으로 메세지 타입 URL은 ~type.googleapis.com/packagename.messagename~ 형식을 갖습니다.
+
+	다른 언어에서 ~Any~ 타입 구현은 런타임 라이브러리를 지원하며 typesafe한 압축 및 압축 해제를 지원합니다. 예를 들어, 자바에서는 ~Any~ 타입에 ~pack()~, ~unpack()~ 메서드가 있고, C++에서는 ~PackFrom()~, ~UnpackTo()~ 메서드가 있습니다.
+	#+BEGIN_SRC proto
+    // Storing an arbitrary message type in Any.
+    NetworkErrorDetails details = ...;
+    ErrorStatus status;
+    status.add_details()->PackFrom(details);
+    
+    // Reading an arbitrary message from Any.
+    ErrorStatus status = ...;
+    for (const Any& detail : status.details()) {
+      if (detail.Is<NetworkErrorDetails>()) {
+        NetworkErrorDetails network_error;
+        detail.UnpackTo(&network_error);
+        ... processing network_error ...
+      }
+    }
+	#+END_SRC
+	*현재 모든 언어에서 Any 타입을 지원하기 위한 라이브러리가 개발중입니다.*
+
+	만약 [[https://developers.google.com/protocol-buffers/docs/proto][proto2 문법]]에 이미 익숙하시다면, ~Any~ 타입 대신 [[https://developers.google.com/protocol-buffers/docs/proto#extensions][extenstions]]을 사용하실 수도 있습니다.
+** Oneof
+   
