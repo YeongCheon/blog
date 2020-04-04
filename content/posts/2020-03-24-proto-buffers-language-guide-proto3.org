@@ -3,9 +3,9 @@
 #+AUTHOR: yeongcheon
 #+DATE: 2020-03-24 22:00:00 +0900
 #+TAGS[]: protobuffers proto3 google
-#+DRAFT: true
+#+DRAFT: false
 
-매번 [[https://developers.google.com/protocol-buffers/docs/proto3#simple][영어문서]] 보기 빡쳐서 직접 번역기 돌려가며 쓰는 번역본. 영어를 잘 못하기 때문에 오역이 있을 수(+분명히+) 있습니다.
+매번 [[https://developers.google.com/protocol-buffers/docs/proto3#simple][영어문서]] 보기 빡쳐서 직접 번역기 돌려가며 쓰는 번역본. +번역기와 의역, 오역 범벅입니다.+ 가급적이면 공식 문서를 보세요.
 
 * Language Guide(proto3)
 ** Defining A Message Type
@@ -449,3 +449,70 @@
 	+ *enum 값을 string 대신 숫자로 출력*: JSON 출력 시 enum은 기본적으로 값의 이름이 출력됩니다. 이 대신 enum 값의 숫자 값을 사용하는 옵션을 제공할 수 있습니다.
 
 ** Options
+   ~.proto~ 파일에는 각 파일마다 주석으로 여러가지 옵션을 추가할 수 있습니다. 옵션은 파일의 정의 자체를 변경하진 않지만 특정 상황에서 처리되는 방식에 영향을 줄 수 있습니다. 사용 가능한 옵션 전체 목록은 ~google/protobuf/descriptor.proto~ 에 있습니다.
+
+   일부 옵션을 파일 레벨의 옵션으로, 메세지, num, 서비스 레벨이 아닌 최상위 영역에 작성해야 합니다. 일부 옵션은 메세지 레벨의 옵션으로서, 반드시 메세지 정의 안에 작성해야 합니다. 일부 옵션은 필드 레벨 옵션으로서, 반드시 필드 정의 안에 작성해야 합니다. enum 타입, enum 값, 서비스 타입, 서비스 메서드에 대한 옵션을 작성할 수도 있습니다. 그러나 현재는 유용한 옵션이 없습니다.
+
+
+   아래는 일반적으로 쓰이는 일부 옵션들입니다.
+   + ~java_package~ (file option): 생성되는 자바 클래스 파일들을 위한 패키지를 선언합니다. ~java_package~ 옵션을 ~.proto~ 파일에 작성하지 않은 경우에는 기본적으로 proto 패키지(~.proto~ 파일에 "package" 키워드를 사용하여 선언한 값)가 사용됩니다. 그러나 프로토 패키지는 리버스 도메인으로 시작하지 않기 때문에 좋은 Java 패키지를 만들지 않습니다. 만약 자바 코드를 생성하지 않는다면 이 옵션은 적용되지 않습니다..
+   #+BEGIN_SRC proto
+
+   option java_package = "com.example.foo";
+
+   #+END_SRC
+   + ~java_multiple_files~ (file option):  최상위 레벨 메세지, enum, 서비스가 ~.proto~ 파일의 이름을 딴 외부 클래스가 아닌 패키지 수준에서 정의되도록 합니다.
+   #+BEGIN_SRC proto
+
+   option java_multiple_files = true;
+
+   #+END_SRC
+   + ~java_outer_classname~ (file_option): 클래스 이름(및 파일 이름)을 가장 최상위에 있는 자바 클래스 이름으로 생성합니다. ~.proto~ 파일에 ~java_outer_classname~ 이 선언되지 않은 경우엔 ~.proto~ 파일 이름을 camel-case로 변환하여 클래스 이름으로 사용합니다(예를 들어 foo_bar.proto는 FooBar.java가 됩니다). Java 코드를 생성하지 않는다면 이 옵션은 적용되지 않습니다.
+   #+BEGIN_SRC proto
+
+   option java_outer_classname = "Ponycopter";
+
+   #+END_SRC
+   + ~optimize_for~ (file_option): ~SPEED~, ~CODE_SIZE~, ~LITE_RUNTIME~ 중 하나를 사용할 수 있습니다. 이는 아래와 같은 방식으로 C++과 Java 코드(및 서드파티 코드 생성) 생성에 영향을 미칩니다.
+     - ~SPEED~ (default): 프로토버퍼 컴파일러는 직렬화, 파싱, 그리고 작업을 수행하기 위한 코드를 생성합니다. 이 코드는 고도로 최적화되어 있습니다.
+     - ~CODE_SIZE~: 프로토콜 버퍼 컴파일러는 최소한의 클래스를 생성하며 직렬화, 파싱 및 기타 다양한 작업을 구현하기 위해 공유 리플렉션 기반 코드를 사용합니다. 생성된 코드는 ~SPEED~ 옵션을 사용해 생성한 코드보다는 크기가 훨씬 작지만 동작 속도는 느려집니다. 클래스들은 ~SPEED~ 옵션을 사용해 구현한 코드와 동일한 public API를 구현합니다. 이 모드는 매우 많은 수의 .proto 파일이 포함된 앱에서 가장 유용합니다. 모든 파일이 맹목적으로 빠를 필요는 없으니깐요.
+     - ~LITE_RUNTIME~: 프로토콜 버퍼 컴파일러가 "lite" 런타임 라이브러리에만 의존하는 클래스를 생성합니다(~libprotobuf~ 대신 ~libprotobuf-lite~ 에 의존). lite 런타임 라이브러리는 전체 라이브러리보다 훨씬 작지만(약 10배정도) descriptor와 reflection과 같은 특정 기능을 생략합니다. 이 기능은 모바일 기기같은 제한된 플랫폼에서 실행되는 앱에 특히 유용합니다. 컴파일러는 ~SPEED~ 모드에서와 같이 여전히 빠른 메서드를 구현합니다. 생성된 클래스는 각 언어로 MessageLite 인터페이스를 구현하며, 전체 Message 인터페이스 메소드 중 일부만 제공합니다.
+   #+BEGIN_SRC proto
+
+   option optimize_for = CODE_SIZE;
+
+   #+END_SRC
+   + ~cc_enable_arenas~ (file_option): C++ 코드를 생성할 때 [[https://developers.google.com/protocol-buffers/docs/reference/arenas][arena allocation]]을 활성화합니다.
+   + ~objc_class_prefix~ (file_option): ~.proto~ 파일에서 생성된 Objective-C 클래스와 enum에 접두어를 붙입니다. 이건 기본값이 아닙니다. [[https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/ProgrammingWithObjectiveC/Conventions/Conventions.html#//apple_ref/doc/uid/TP40011210-CH10-SW4][Apple에서 권장]]하는대로 3-5자의 대문자로 된 접두사를 사용하는게 좋습니다. 참고로  Apple은 두 글자의 접두사를 모두 선점했습니다.
+   + ~deprecated~ (field option): ~true~ 로 설정할 경우, 이 필드는 향 후 새로 생성되는 코드에선 더이상 사용하지 않음을 표시합니다. 대부분의 언어에서 이것은 실제로 효과가 없습니다. Java의 경우 ~@Deprecated~ 어노테이션이 생성됩니다. 향 후 각 언어별 코드 생성기는 필드 접근자에 대해 지원 중단을 경고하는 주석을 생성할 수 있으며, 이로 인해 코드를 컴파일 할 때 경고가 발생합니다. 다른 사람이 필드를 사용하지 않고 새 사용자가 필드를 사용하지 못하게 하려면 필드 선언을 [[https://developers.google.com/protocol-buffers/docs/proto3#reserved][예약 구문]]으로 바꾸세요.
+   #+BEGIN_SRC proto
+
+   int32 old_field = 6 [deprecated=true];
+   #+END_SRC
+
+*** Custom Options
+	프로토콜 버퍼는 고유한 옵션을 정의하고 사용할 수 있습니다. 이것은 대부분의 사람들은 필요하지 않는 고급 기능입니다. 자신만의 옵션을 만들 필요가 있다면 [[https://developers.google.com/protocol-buffers/docs/proto#customoptions][Proto2 언어 가이드]]를 참고하세요. 참고로 사용자 정의 옵션을 만들 때 [[https://developers.google.com/protocol-buffers/docs/proto#extensions][Extensions]]을 사용하며, 오직 proto3 의 사용자 정의 옵션에서만 허용됩니다.
+
+** Generating Your Classes
+   ~.proto~ 파일에 정의된 메세지로 Java, Python, C++, Go, Ruby, Objective-C, C# 코드를 생성하기 위해선 ~protoc~ 컴파일러를 이용해 ~.proto~ 파일을 컴파일 하여야 합니다. 컴파일러가 설치되어 있지 않다면 [[https://developers.google.com/protocol-buffers/docs/downloads][패키지를 다운]]받아 README 파일을 보고 따라하세요. Go의 경우엔 컴파일러를 위한 특별한 코드 생성 플러그인이 필요합니다. 설치 방법은 Github의 [[https://github.com/golang/protobuf/][golang/protobuf]] 저장소에서 찾을 수 있습니다.
+
+   프로토콜 컴파일러는 다음과 같이 호출합니다.
+   #+BEGIN_SRC proto
+
+   protoc --proto_path=IMPORT_PATH --cpp_out=DST_DIR --java_out=DST_DIR --python_out=DST_DIR --go_out=DST_DIR --ruby_out=DST_DIR --objc_out=DST_DIR --csharp_out=DST_DIR path/to/file.proto
+
+   #+END_SRC
+   + ~IMPORT_PATH~ 는 ~import~ 구문을 수행하기 위해 ~.proto~ 파일이 위치한 디렉토리 위치를 지정합니다. 만약 입력하지 않았다면 기본적으로 현재 디렉토리가 사용됩니다. 여러 개의 폴더를 지정해야 할 경우엔 ~--proto_path~ 옵션을 여러번 입력하여 지정할 수 있습니다. 순차적으로 검색될 것입니다. ~--proto_path~ 명령어를 짧게 사용하고 싶다면 ~-I=/IMPORT_PATH/~ 명령어를 사용할 수 있습니다.
+   + 하나 이상의 코드 생성 지시문을 제공할 수 있습니다.
+     - ~--cpp_out~ 명령어는 C++ 코드를 ~DST_DIR~ 안에 생성합니다. [[https://developers.google.com/protocol-buffers/docs/reference/cpp-generated][C++ 코드 생성 레퍼런스]]를 참고하세요.
+     - ~--java_out~ 명령어는 Java 코드를 ~DST_DIR~ 안에 생성합니다. [[https://developers.google.com/protocol-buffers/docs/reference/java-generated][Java 코드 생성 레퍼런스]]를 참고하세요.
+     - ~--python_out~ 명령어는 Python 코드를 ~DST_DIR~ 안에 생성합니다. [[https://developers.google.com/protocol-buffers/docs/reference/python-generated][Python 코드 생성 레퍼런스]]를 참고하세요.
+     - ~--go_out~ 명령어는 Go 코드를 ~DST_DIR~ 안에 생성합니다. [[https://developers.google.com/protocol-buffers/docs/reference/go-generated][Go 코드 생성 레퍼런스]]를 참고하세요.
+     - ~--ruby_out~ 명령어는 Ruby 코드를 ~DST_DIR~ 안에 생성합니다. 루비 코드 생성 레퍼런스는 곧 공개됩니다!
+     - ~--objc_out~ 명령어는 Objective-C 코드를 ~DST_DIR~ 안에 생성합니다. [[https://developers.google.com/protocol-buffers/docs/reference/objective-c-generated][Objective-C 코드 생성 레퍼런스]]를 참고하세요.
+     - ~--csharp_out~ 명령어는 C# 코드를 ~DST_DIR~ 안에 생성합니다. [[https://developers.google.com/protocol-buffers/docs/reference/csharp-generated][C# 코드 생성 레퍼런스]]를 참고하세요.
+     - ~--php_out~ 명령어는 PHP 코드를 ~DST_DIR~ 안에 생성합니다. [[https://developers.google.com/protocol-buffers/docs/reference/php-generated][PHP 코드 생성 레퍼런스]]를 참고하세요.
+     편의상 ~DST_DIR~ 이 ~.zip~, ~.jar~ 로 끝날 경우 컴파일러는 지정된 이름으로 된 단일 zip 형식의 압축 파일에 코드를 생성합니다. ~.jar~ 파일 생성 시에도 JAVA JAR 파일에 필요한 매니페스트 파일이 제공됩니다. 참고로 압축파일이 이미 존재할 경우엔 덮어씌워집니다. 압축 파일에 파일을 추가할 정도로 컴파일러가 똑똑하진 못해요.
+   + 하나 이상의 ~.proto~ 파일들을 입력할 수 있습니다. 한번에 여러 ~.proto~ 파일들을 지정할 수 있습니다. 파일 이름은 현재 디렉토리와 연관이 있지만 컴파일러가 표준 이름을 결정할 수 있도록 각 파일은 ~IMPORT_PATH~ 중 하나에 있어야 합니다.
+
+
