@@ -348,3 +348,56 @@
 	 + *oneof 요소로 이동 또는 제외할 경우*: 메세지가 직렬화, 파싱될 경우 일부 정보가 손실될 수 있습니다(일부 필드는 지워짐). 그러나 단일 필드를 새 필드로 안전하게 이동할 수 있으며 oneof 요소로 하나만 설정되어 있으면 여러 필드를 이동할 수 있습니다.
 	 + *oneof 필드 요소로 추가하거나 제거할 경우*: 메세지가 직렬화, 파싱된 후에는 현재 셋팅된 oneof 필드가 지워질 수 있습니다.
 	 + *onfof 분할 또는 병합할 경우*: 이 이슈는 일반 필드 이동 이슈와 유사합니다.
+** Maps
+   데이터 정의 시 Map 형식을 사용하고 싶을 경우, 프로토콜 버퍼에선 이를 위해 유용한 구문을 제공합니다.
+   #+BEGIN_SRC proto
+   map<key_type, value_type> map_field = N;
+   #+END_SRC
+   ~key_type~ 위치에는 interal 또는 string 타입이 올 수 있습니다(또는 부동소수점, ~bytes~ 타입을 제외한 아무  [[https://developers.google.com/protocol-buffers/docs/proto3#scalar][스칼라]] 타입). enum 타입은 ~key_type~ 위치에 사용할 수 없습니다. ~value_type~은 다른 map 타입을 제외한 모든 타입을 사용할 수 있습니다.
+
+   예를 들어, string 타입의 키를 사용하고  ~Proejct~ 메세지 타입을 값으로 갖는 map을 생성하고 싶을 경우엔 아래와 같이 정의할 수 있습니다.
+   #+BEGIN_SRC proto
+   map<string, Project> projects = 3;
+   #+END_SRC
+   + map 필드엔 ~repeated~ 구문을 사용할 수 없습니다.
+   + 포맷 순서, map의 값에는 순서가 정의되어 있지 않습니다. 따라서 map 내부의 키, 값의 순서는 신뢰할 수 없습니다.
+   + ~.proto~ 파일 내부 텍스트를 정리(formatting)할 때, map은 key값 순서대로 정렬됩니다. 숫자타입의 key는 오름차순으로 정렬됩니다.
+   + 데이터를 파싱하거나 병합(머지)할 때, map의 key가 중복될 경우 마지막으로 선언된 key 값이 사용됩니다. ~.proto~ 파일에서 파싱할 때 중복이 있을 경우엔 파싱이 실패합니다.
+   + 만약 키만 있고 값이 없는 맵이 있을 경우, 각 언어에 의존하여 처리됩니다. C++, Java, Python 같은 경우엔 기본값으로 직렬화 되고, 그 외의 언어의 경우엔 아무것도 직렬화 되지 않습니다.
+   map 생성 API는 현재 proto3를 지원하는 모든 언어에서 사용 가능합니다. map API에 대해 각 언어별로 자세히 알아보고 싶으면 [[https://developers.google.com/protocol-buffers/docs/reference/overview][API reference]]를 참고하세요.
+*** Backwards compatibility
+	map 문법(syntax)는 실제론 다음과 같이 처리됩니다. 따라서 map을 지원하지 않는 언어를 사용할 경우에도 여전히 map 데이터를 처리할 수 있습니다.
+    #+BEGIN_SRC proto
+    message MapFieldEntry {
+      key_type key = 1;
+      value_type value = 2;
+    }
+
+    repeated MapFieldEntry map_field = N;
+    #+END_SRC
+	map을 지원하는 프로토콜 버퍼 구현은 위 예제와 같은 형식으로도 사용할 수 있도록 데이터를 작성하여야 합니다.
+** Packages
+   메세지에서 이름이 중복되어 충돌되는 상황을 막기 위해서 ~.proto~ 파일에 ~package~ 구문을 사용할 수 있습니다.
+   #+BEGIN_SRC proto
+   package foo.bar;
+   message Open { ... }
+   #+END_SRC
+   위와 같이 정의한 후 다른 메세지에서 ~Open~ 메세지를 필드 타입으로 사용할 때 다음과 같이 패키지명을 사용할 수 있습니다.
+   #+BEGIN_SRC proto
+   message Foo {
+     ...
+     foo.bar.Open open = 1;
+     ...
+   }
+   #+END_SRC
+   패키지 구문이 생성된 코드에 영향을 주는 방식은 선택한 언어마다 다릅니다.
+   + *C++* 의 경우에는 작명 규칙에 따라 클래스들이 생성됩니다. 예를들어, ~Open~ 은 ~foo::bar~ 안에 있을 것입니다.
+   + *Java* 의 경우에는 ~.proto~ 파일에 ~open java_package~ 라고 명시하지 않는 한 패키지를 자바 패키지로 사용합니다.
+   + *Python* 의 경우에는 파일 시스템의 위치에 따라 Python 모듈이 구성되므로 패키지 구문을 무시합니다.
+   + *Go* 의 경우에는 ~.proto~ 파일에 ~option go_package~ 라고 명시하지 않는 한 패키지를 Go 패키지 이름으로 사용합니다.
+   + *Ruby* 의 경우에는 Ruby 작명 규칙에 따라 클래스가 생성되며 Ruby 특유의 대문자 표기 스타일로 변경됩니다(첫번째 문자는 대문자로 변경되며, 알파벳이 아닐 경우엔 앞에 ~PB_~ 문자가 붙습니다). 예를 들어, ~Open~ 은 ~Foo::Bar~ 안에 있을 것입니다.
+   + *C#* 의 경우에는 ~.proto~ 파일에 ~option csharp_namespace~ 라고 명시하지 않는 한  파스칼 형식으로 변환된 후 작명 규칙에 따라 코드를 생성합니다. 예를 들어, ~Open~ 은 ~Foo::Bar~ 안에 있을 것입니다.
+*** Packages and Name Resolution
+	프로토콜 버퍼 언어에서 타입 이름 확인은 C++과 비슷하게 동작합니다. 먼저 가장 안쪽의 범위를 탐색하고 그 다음 가장 안쪽부터 두번째, 세번째.. 이런식으로 탐색하여 각 패키지를 상위 패키지의 "내부" 패키지로 간주합니다. 가장 앞쪽의 '.' (예: ~.foo.bar.Baz~)는 최상위 범위에서 시작하는 것을 의미합니다.
+
+	프로토콜 버퍼 컴파일러는 모든 ~.proto~ 파일을 가져와서 파싱한 후 모든 유형 이름을 분석합니다. 각 언어별 코드 생성기는 범위 지정 규칙이 다르더라도 해당 언어가 각 유형을 참조하는 방법을 알고 있습니다.
