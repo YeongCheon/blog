@@ -8,7 +8,8 @@
 * 기본 문법
 ** if 사용법
   kotlin에서는 if, when, try catch문을 활용해서 변수에 값을 편하게 할당할 수 있다. 예를 들어서 자바에서 아래와 같이 쓰는 문법이 있다고 해보자.
-  {{< highlight java "linenos=inline,hl_lines=2 3" >}}
+
+  #+BEGIN_SRC kotlin
   // java code
   String name;
 
@@ -32,7 +33,7 @@
    }
 
    // 코틀린에서는 삼항 연산자를 지원하지 않는다.
-  {{< / highlight >}}
+  #+END_SRC
 
   위와 같이 코드를 작성하면 if문 안에 각 block 안의 가장 마지막 코드가 name 변수 안에 할당된다. 그리고 위 예제에서 name 변수의 타입은 자동으로 *String?* 이 된다. 만약 else 블록에서 마찬가지로 String 타입을 반환하면 name 변수의 타입은 *String*, 그 이외에 다른 타입을 반환하면 *Any* 타입이 된다.
 
