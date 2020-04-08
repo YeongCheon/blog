@@ -1,0 +1,6 @@
+#+TITLE: npm 프로젝트 배포해보기
+#+SUBTITLE: npm angular
+#+AUTHOR: yeongcheon
+#+DATE: 2020-04-08 23:00:00 +0900
+#+TAGS[]: npm angular
+#+DRAFT: true
