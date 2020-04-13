@@ -5,7 +5,7 @@ pygmentsCodeFences=true
 pygmentsOptions = "linenos=table"
 languageCode = "ko-ko"
 # Disqus shortname
-disqusShortname = "yeongcheonkim"
+disqusShortname = "yeongcheon"
 # google analytics tracking id
 googleAnalytics = "UA-135478508-1"
 # googleAnalytics = "Toracking ID"
