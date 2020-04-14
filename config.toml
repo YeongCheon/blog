@@ -1,6 +1,6 @@
 baseURL = "https://yeongcheon.github.io/"
 theme = ["whiteplain-dark"]
-title = "꿀테크 블로그"
+title = "김영천 블로그"
 pygmentsCodeFences=true
 pygmentsOptions = "linenos=table"
 languageCode = "ko-ko"
