@@ -3,7 +3,7 @@
 #+AUTHOR: yeongcheon
 #+DATE: 2020-04-15 19:00:00 +0900
 #+TAGS[]: grpc protobuf
-#+DRAFT: true
+#+DRAFT: false
 
 
 * 목표
