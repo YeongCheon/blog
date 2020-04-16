@@ -3,7 +3,7 @@ theme = ["whiteplain-dark"]
 title = "김영천 블로그"
 pygmentsCodeFences=true
 pygmentsOptions = "linenos=table"
-languageCode = "ko-ko"
+languageCode = "ko"
 # Disqus shortname
 disqusShortname = "yeongcheon"
 # google analytics tracking id
