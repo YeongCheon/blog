@@ -1,0 +1,6 @@
+#+TITLE: 메서드 내부에 선언한 클래스로 캐싱할 때 발생하는 메모리 버그
+#+SUBTITLE: 메서드 내부에 정의한 클래스를 이용해 ehcache를 사용할 때 발생하는 메모리 버그를 알아봅시다.
+#+AUTHOR: yeongcheon
+#+DATE: 2020-04-25 19:00:00 +0900
+#+TAGS[]: kotlin ehcache memory bug
+#+DRAFT: true
