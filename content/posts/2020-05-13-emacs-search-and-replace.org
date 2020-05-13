@@ -1,0 +1,13 @@
+#+TITLE: 이맥스에서 여러 파일 찾아 바꾸기
+#+SUBTITLE: 이맥스 Dired에서 여러 파일을 대상으로 키워드 검색 후 내용을 바꾸는 방법을 알아보자.
+#+AUTHOR: yeongcheon
+#+DATE: 2020-05-13 23:00:00 +0900
+#+TAGS[]: emacs
+#+DRAFT: true
+
+#+BEGIN_SRC
+C-x d
+Q
+Y
+C-x s !
+#+END_SRC
