@@ -3,7 +3,7 @@
 #+AUTHOR: yeongcheon
 #+DATE: 2020-05-13 23:00:00 +0900
 #+TAGS[]: emacs
-#+DRAFT: true
+#+DRAFT: false
 
 대부분의 편집기에서 기본적으로 ~Ctrl + Shift + h~ 단축키에 해당하는 ~파일에서 찾기/바꾸기~ 기능을 emacs에서 사용해보자.
 
