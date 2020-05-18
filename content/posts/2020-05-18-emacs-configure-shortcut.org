@@ -1,0 +1,6 @@
+#+TITLE: 이맥스에서 특정 명령어 단축키로 지정하기
+#+SUBTITLE: 이맥스에서 특정 명령어 단축키로 지정하기
+#+AUTHOR: yeongcheon
+#+DATE: 2020-05-18 13:00:00 +0900
+#+TAGS[]: emacs
+#+DRAFT: true
