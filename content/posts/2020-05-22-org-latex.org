@@ -4,7 +4,7 @@
 #+DATE: 2020-05-22 23:00:00 +0900
 #+TAGS[]: hugo emacs org-mode latex
 #+MATH: true
-#+DRAFT: true
+#+DRAFT: false
 
 이 글은 [[https://themes.gohugo.io/theme/hugo-coder/post/math-typesetting.html][여기]][[https://emacs.stackexchange.com/questions/2650/how-should-i-write-inline-equations-in-org-mode-so-they-export-to-latex-properly][저기]]를 참고해서 작성되었습니다.
 
