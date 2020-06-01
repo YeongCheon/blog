@@ -1,7 +1,0 @@
-#+TITLE: grpc unary interceptor 적용
-#+SUBTITLE: grpc unary interceptor 적용
-#+AUTHOR: yeongcheon
-#+DATE: 2020-05-30 12:00:00 +0900
-#+TAGS[]: grpc golang
-#+MATH: false
-#+DRAFT: true
