@@ -1,0 +1,7 @@
+#+TITLE: gRPC를 웹브라우저에 호출해보자
+#+SUBTITLE: gRPC를 웹브라우저에 호출해보자
+#+AUTHOR: yeongcheon
+#+DATE: 2020-06-12 22:00:00 +0900
+#+TAGS[]: gRPC envoy golang
+#+MATH: false
+#+DRAFT: true
