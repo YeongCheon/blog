@@ -1,7 +1,0 @@
-#+TITLE: envoy proxy 설정해보자
-#+SUBTITLE: envoy proxy를 통해 브라우저에서 gRPC 호출하기
-#+AUTHOR: yeongcheon
-#+DATE: 2020-06-28 22:00:00 +0900
-#+TAGS[]: grpc envoy grpc-web
-#+MATH: false
-#+DRAFT: true
