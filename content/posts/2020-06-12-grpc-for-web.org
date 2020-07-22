@@ -235,4 +235,4 @@ class ChatService {
   #+END_SRC
 
 * 마무리
-  이로써 웹에서 server stream RPC를 호출하는 작업이 모두 마무리 되었습니다. 채팅방에 메세지를 전송하는 기능을 구현하려면 메세지 전송용 unary RPC를 별도로 작성하여야 합니다. unary RPC에 대한 예제는 웹 상에 자료가 많이 나와 있으므로 [[https://blog.breezymind.com/2019/11/19/grpc-%25EA%25B5%25AC%25ED%2598%2584-unary-rpc-1/][여기]][[https://velog.io/@kyusung/grpc-web-example][저기]] 참고하시길 바랍니다.
+  이로써 웹에서 server stream RPC를 호출하는 작업이 모두 마무리 되었습니다. 처음에 언급했다시피 채팅방에 메세지를 전송하는 기능을 구현하려면 메세지 전송용 unary RPC를 별도로 작성하여야 합니다. unary RPC에 대한 예제는 웹 상에 자료가 많이 나와 있으므로 [[https://blog.breezymind.com/2019/11/19/grpc-%25EA%25B5%25AC%25ED%2598%2584-unary-rpc-1/][여기]][[https://velog.io/@kyusung/grpc-web-example][저기]] 참고하시길 바랍니다.
