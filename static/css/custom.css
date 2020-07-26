@@ -8,9 +8,11 @@
 }
 
 .site-title img {
+	max-width: 50px;
 	border-radius: 100%;
 	background: white;
-	margin-right: 5px;
+	border: 1px solid gray;
+	margin-right: 10px;
 }
 
 .site-navi, .site-title, .site-navi-items {
