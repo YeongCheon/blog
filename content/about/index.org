@@ -1,0 +1,29 @@
+#+TITLE: about me
+#+SUBTITLE: 
+#+LAYOUT: post
+#+AUTHOR: yeongcheon
+#+DATE: 2020-07-26 00:00:00 +0900
+#+TAGS[]: profile
+#+DRAFT: false
+
+#+BEGIN_CENTER
+[[/images/profile_no_background.png]]
+#+END_CENTER
+
+안녕하세요. 웹 개발자에요. 크리에이터와 팬들의 소통 커뮤니티 [[https://shelter.id][쉘터]]를 개발하고 있어요.
+
+* Email
+- [[mailto:kyc1682@gmail.com][kyc1682@gmail.com]]
+- [[mailto:dev@shelter.id][dev@shelter.id]]
+
+* 👍 Like
+  - Web
+  - Golang
+  - Kotlin
+  - Spring
+  - ORM(JPA)
+  - Typescript
+  - Angular
+  - GCP
+  - Firebase
+  - Emacs
