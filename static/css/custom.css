@@ -1,0 +1,18 @@
+.site-navi {
+	align-items: center;
+}
+
+.site-title a {
+	display: flex;
+	align-items: center;
+}
+
+.site-title img {
+	border-radius: 100%;
+	background: white;
+	margin-right: 5px;
+}
+
+.site-navi, .site-title, .site-navi-items {
+	font-size: 15pt;
+}
