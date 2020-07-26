@@ -1,0 +1,69 @@
+#+TITLE: tinode series.003 - API document
+#+SUBTITLE: tinode chat API document 한국어 번역본
+#+LAYOUT: post
+#+AUTHOR: yeongcheon
+#+DATE: 2020-07-26 00:00:00 +0900
+#+TAGS[]: tinode golang chat "instant messaging"
+#+DRAFT: true
+
+매번 [[https://github.com/tinode/chat/blob/master/docs/API.md][영어문서]] 보기 빡쳐서 직접 번역기 돌려가며 쓰는 번역본. +번역기와 의역, 오역 범벅입니다.+ 가급적이면 [[https://github.com/tinode/chat/blob/master/docs/API.md][공식 문서]]를 보세요.
+
+* Server API
+** How it works?
+** General Considerations
+** Connecting to the Server 
+*** gRPC
+*** WebSocket
+*** Long Polling
+*** Out of Band Large Files
+*** Running Behind a Reverse Proxy
+* Users
+** Authentication
+*** Creating an Account
+*** Logging in
+*** Changing Authentication Parameters
+*** Resetting a Password, i.e. "Forgot Password"
+** Suspending a User
+** Credential Validation
+** Access Control
+* Topics 
+** ~me~ Topic
+** ~fnd~ and Tags: Finding Users and Topics
+*** Query Language
+*** Incremental Updates to Queries
+*** Query Rewrite
+*** Possible Use Cases
+** Peer to Peer Topics
+** Group Topics
+** ~sys~ Topic
+* Using Server-Issued Message IDs
+* User Agent and Presence Notifications
+* Public and Private Fields 
+** Public
+** Private
+* Format of Content
+* Out-of-Band Handling of Large Files 
+** Uploading
+** Downloading
+* Push Notifications 
+** Tinode Push Gateway
+** Google FCM
+** Stdout
+* Messagse
+** Client to Server Messages 
+*** ~{hi}~
+*** ~{acc}~
+*** ~{login}~
+*** ~{sub}~
+*** ~{leave}~
+*** ~{pub}~
+*** ~{get}~
+*** ~{set}~
+*** ~{del}~
+*** ~{note}~
+** Server to Client Messages 
+*** ~{data}~
+*** ~{ctrl}~
+*** ~{meta}~
+*** ~{pres}~
+*** ~{info}~
