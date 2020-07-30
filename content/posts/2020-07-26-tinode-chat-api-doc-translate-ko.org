@@ -3,12 +3,28 @@
 #+LAYOUT: post
 #+AUTHOR: yeongcheon
 #+DATE: 2020-07-26 00:00:00 +0900
-#+TAGS[]: tinode golang chat "instant messaging"
+#+TAGS[]: tinode golang chat 
 #+DRAFT: true
 
 매번 [[https://github.com/tinode/chat/blob/master/docs/API.md][영어문서]] 보기 빡쳐서 직접 번역기 돌려가며 쓰는 번역본. +번역기와 의역, 오역 범벅입니다.+ 가급적이면 [[https://github.com/tinode/chat/blob/master/docs/API.md][공식 문서]]를 보세요.
 
 * Server API
+  Tinode는 IM 라우터이자 스토어입니다. 발행-구독 모델 컨셉을 대략적으로 따릅니다.
+
+  서버는 세션, 사용자, 그리고 토픽을 연결합니다. 세션은 클라이언트 프로그램과 서버 간의 네트워크 연결을 의미합니다. 사용자는 세션을 서버에 연결하는 사람을 의미합니다. 토픽은 세션들끼리 콘텐츠를 주고받는 통신 채널입니다.
+
+  사용자가 토픽은 각각 고유한 ID가 할당됩니다. 사용자 ID는 'usr' 문자로 시작하는 base64-URL 인코딩 6비트 랜덤 문자로 이루어져 있습니다(예: usr2il9suCbuko). 토픽 ID는 아래에서 설명합니다.
+
+  모바일 또는 웹 어플리케이션 클라이언트는 웹소켓 또는 long pulling 방식으로 서버에 연결하여 세션을 생성합니다. 대부분 작업을 수행하기 위해선 클라이언트 인증이 필요합니다. 클라이언트는 {login} 패킷을 전송하여 세션을 인증합니다. 좀 더 자세한 내용은 [[#Authentication][인증 섹션]]을 참고하세요. 인증되면 클라이언트는 나중에 인증에 사용할 토큰을 발급받습니다. 동일한 사용자가 여러 세션을 동시에 설정할 수 있습니다. 로그아웃은 지원하지 않습니다. (필요하지도 않고요).
+
+  세션이 설정되면 사용자는 토픽을 통해 다른 사용자와 통신을 시작할 수 있습니다. 다음과 같은 토픽들을 사용할 수 있습니다.
+  
+  + ~me~ 는 자기 자신의 프로필을 관리하고 다른 토픽에 대한 알람을 받을 수 있는 토픽입니다. ~me~ 토픽은 모든 사용자가 가지고 있습니다.
+  + ~fnd~ 토픽은 다른 사용자나 토픽을 찾을 때 사용합니다. ~fnd~ 토픽 또한 모든 사용자가 가지고 있습니다.
+  + Peer to Peer 토픽은 두 사용자 간 1:1 통신을 위한 토픽입니다. 각 사용자는 토픽 이름을 상대방의 ID로 인지합니다. 즉, 'usr' 문자로 시작하는 base64-URL 인코딩 6비트 랜덤 문자(예: usr2il9suCbuko)로 인지합니다.
+  + 그룹 토픽은 여러 사용자 간 통신을 위한 토픽입니다. 이 토픽의 이름은 'grp'로 시작하며 11자리의 pseudo 무작위 숫자로 이루어져 있습니다(예: ~grpYiqEXb4QY6s~). 그룹 토픽은 반드시 명시적으로 작성해야 합니다.
+
+
 ** How it works?
 ** General Considerations
 ** Connecting to the Server 
@@ -19,6 +35,9 @@
 *** Running Behind a Reverse Proxy
 * Users
 ** Authentication
+:PROPERTIES:
+:CUSTOM_ID: Authentication
+:END:
 *** Creating an Account
 *** Logging in
 *** Changing Authentication Parameters
