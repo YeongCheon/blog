@@ -19,14 +19,14 @@
 - [[mailto:dev@shelter.id][dev@shelter.id]]
 
 * 👍 Like
-  - Web
+  - Angular
+  - Emacs
+  - Firebase
+  - GCP
   - Golang
   - Kotlin
-  - Spring
   - ORM(JPA)
+  - Spring
   - Typescript
-  - Angular
-  - GCP
-  - Firebase
-  - Emacs
   - Ubuntu
+  - Web
