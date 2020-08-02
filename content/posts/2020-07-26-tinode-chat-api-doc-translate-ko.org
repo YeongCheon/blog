@@ -112,9 +112,20 @@
   로그아웃은 애초에 설계단계부터 지원하지 않았습니다. 만약 애플리케이션에서 사용자를 전환해야 한다면, 새 사용자 인증을 이용해 연결을 새로 하기만 하면 됩니다.
   
 ** Authentication
-:PROPERTIES:
-:CUSTOM_ID: Authentication
-:END:
+   :PROPERTIES:
+   :CUSTOM_ID: Authentication
+   :END:
+   인증(Authentication)은 [[https://en.wikipedia.org/wiki/Simple_Authentication_and_Security_Layer][SASL]]과 컨셉이 매우 유사합니다. 각각 다른 인증 방법을 구현할 수 있도록 어댑터를 제공하고 있습니다. 인증 구현체(Authenticators)는 [[#acc][~{acc}~]] 를 이용해 사용자를 등록하거나 [[#login][~{login}~]] 을 할 때 사용됩니다. 서버는 다음과 같은 인증 방법을 제공합니다.
+
+   + ~token~ 방식은 암호화된 토큰을 이용해 인증합니다.
+   + ~basic~ 방식은 login-password 인증합니다.
+   + ~anonymous~ 방식은 채팅을 통한 고객 지원 요청 처리와 같은 임시 사용자를 위해 디자인 되었습니다.
+   + ~rest~ 방식은 JSON RPC를 통해 외부 인증 시스템을 사용할 수 있도록 하는 [[https://github.com/tinode/chat/tree/master/server/auth/rest][meta-method]]입니다.
+
+   이 외에 다른 인증 방식도 어댑터를 직접 구현하여 사용할 수 있습니다.
+
+   ~token~ 은 기본 인증 방식으로 사용합니다. 이 토큰들은 토큰 인증에 가볍게 사용할 수 있도록 설계되었습니다.
+
 *** Creating an Account
 *** Logging in
 *** Changing Authentication Parameters
@@ -158,7 +169,13 @@
 ** Client to Server Messages 
 *** ~{hi}~
 *** ~{acc}~
+:PROPERTIES:
+:CUSTOM_ID: acc
+:END:
 *** ~{login}~
+:PROPERTIES:
+:CUSTOM_ID: login
+:END:
 *** ~{sub}~
 :PROPERTIES:
 :CUSTOM_ID: sub
