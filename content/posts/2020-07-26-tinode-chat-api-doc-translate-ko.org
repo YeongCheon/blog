@@ -135,10 +135,31 @@
 *** Creating an Account
 	새 계정을 만들 때, 사용자는 서버에 나중에 해당 계정에 접근할 인증 방법을 등록해야 합니다. 계정 생성은 ~basic~, ~anonymous~ 인증만 사용할 수 있습니다. ~basic~ 인증은 고유 아이디 및 비밀번호를 서버에 등록해야 합니다. ~anonymous~ 는 인증 관련 내용을 등록하지 않습니다.
 
-	사용자가 ~{acc login=true}~ 를 셋팅했다면 즉시 인증을 위해 새 계정을 사용할 수 있습니다. ~login=false~ 일 경우엔(또는 설정되지 않았다면) 새 계정은 생성되지만 계정을 생성한 세션의 인증 상태는 변경되지 않습니다. ~login=true~ 일 경우 서버는 생성된 새 계정으로 세션 인증을 시도하고 {acc} 요청에 대한 성공 응답에는 인증 토큰이 포함됩니다. 이 룰은 익명 인증 시에 특히 중요합니다.
+	사용자가 ~{acc login=true}~ 를 셋팅했다면 즉시 인증을 위해 새 계정을 사용할 수 있습니다. ~login=false~ 일 경우엔(또는 설정되지 않았다면) 새 계정은 생성되지만 계정을 생성한 세션의 인증 상태는 변경되지 않습니다. ~login=true~ 일 경우 서버는 생성된 새 계정으로 세션 인증을 시도하고 {acc} 요청에 대한 성공 응답에는 인증 토큰이 포함됩니다. 이 룰은 익명 인증 시에 특히 중요합니다.	
 
 *** Logging in
+	로그인은 ~{login}~ 요청을 통해서 실행됩니다. 로그인은 ~basic~, ~token~ 인증을 통해서만 가능합니다. 모든 로그인은 200 코드와 ~token~ 인증에 사용할 토큰을 ~{ctrl}~ 메세지를 통해 응답 받거나, 300 코드와 추가 인증과 메소드 종속 문제, 또는 4xx 코드와 추가 정보를 요청합니다.^(역자 주: 의역이에요.)
+
+	토큰에는 서버 구성 만료 시간이 있으므로 주기적으로 갱신해야 합니다.
+
 *** Changing Authentication Parameters
+	User may change authentication parameters, such as changing login and password, by issuing an {acc} request. Only basic authentication currently supports changing parameters:
+
+	#+BEGIN_SRC json
+acc: {
+  id: "1a2b3", // string, client-provided message id, optional
+  user: "usr2il9suCbuko", // user being affected by the change, optional
+  token: "XMg...g1Gp8+BO0=", // authentication token if the session
+                             // is not yet authenticated, optional.
+  scheme: "basic", // authentication scheme being updated.
+  secret: base64encode("new_username:new_password") // new parameters
+}
+	#+END_SRC
+
+	In order to change just the password, username should be left empty, i.e. secret: base64encode(":new_password").
+
+If the session is not authenticated, the request must include a token. It can be a regular authentication token obtained during login, or a restricted token received through Resetting a Password process. If the session is authenticated, the token must not be included. If the request is authenticated for access level ROOT, then the user may be set to a valid ID of another user. Otherwise it must be blank (defaulting to the current user) or equal to the ID of the current user.
+
 *** Resetting a Password, i.e. "Forgot Password"
 ** Suspending a User
 ** Credential Validation
