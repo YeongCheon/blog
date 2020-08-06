@@ -143,7 +143,10 @@
 	토큰에는 서버 구성 만료 시간이 있으므로 주기적으로 갱신해야 합니다.
 
 *** Changing Authentication Parameters
-	User may change authentication parameters, such as changing login and password, by issuing an {acc} request. Only basic authentication currently supports changing parameters:
+	:PROPERTIES:
+	:CUSTOM_ID: Changing Authentication Parameters
+	:END:
+	사용자가 아이디나 패스워드같은 인증 관련 파라메터를 변경하려면 ~{acc}~ 사용해서 요청을 해야한다. 현재는 ~basic~ 인증만 지원한다.
 
 	#+BEGIN_SRC json
 acc: {
@@ -156,11 +159,28 @@ acc: {
 }
 	#+END_SRC
 
-	In order to change just the password, username should be left empty, i.e. secret: base64encode(":new_password").
+	패스워드만 바꾸고 싶다면, ~username~ 필드는 비워놓아야 한다(예: ~secret: base64encode("new_password")~).
 
-If the session is not authenticated, the request must include a token. It can be a regular authentication token obtained during login, or a restricted token received through Resetting a Password process. If the session is authenticated, the token must not be included. If the request is authenticated for access level ROOT, then the user may be set to a valid ID of another user. Otherwise it must be blank (defaulting to the current user) or equal to the ID of the current user.
+	세션이 인증되지 않은 상태라면, request는 무조건 ~token~ 을 포함하고 있어야 한다. 이 ~token~ 은 로그인을 통해 얻은 일반 인증 토큰이거나, [[#resetting a password][비밀번호 재설정]] 작업을 통해 얻는 토큰일 수 있습니다. 세션이 인증되면 ~token~ 을 포함하지 않아야 합니다. 만약 ~ROOT~ 레벨로 인증했다면 ~user~ 값에 다른 유효한 사용자의 ID값을 셋팅할 수 있습니다. 그렇지 않다면 이 값을 빈 값으로 유지하거나(기본값: 현재 사용자) 자기 자신의 ID값을 할당해야 합니다.
 
 *** Resetting a Password, i.e. "Forgot Password"
+    :PROPERTIES:
+    :CUSTOM_ID: resetting a password
+    :END:
+    아이디나 비밀번호를 초기화 할 때(또는 인증 모듈이 지원하는 인증용 시크릿 토큰), ~{login}~ 메세지를 ~scheme~, ~reset~, 그리고 base64-encoded 문자값("~authentication scheme to reset secret for~:~reset method~:~reset method value~")을 포함한 ~secret~ 값을 전송합니다. 가장 일반적인 케이스로 이메일의 비밀번호 수정을 하는 코드는 아래와 같습니다.
+
+	#+BEGIN_SRC
+login: {
+  id: "1a2b3",
+  scheme: "reset",
+  secret: base64encode("basic:email:jdoe@example.com")
+}
+	#+END_SRC
+
+	여기서 ~jdoe@example.com~ 은 이전에 검증된 사용자의 이메일입니다.
+
+	이메일이 등록된 데이터와 일치하면, 서버는 비밀번호를 재설정 하기 위한 지시 사항과 함께 지정된 방법 및 주소를 사용하여 메세지를 보냅니다. [[#Changing Authentication Parameters][Changing Authentication Parameters]] 섹션에 설명된대로 이메일에는 ~{acc}~ request에 포함할 수 있는 시크릿 코드가 포함되어 있습니다.
+
 ** Suspending a User
 ** Credential Validation
 ** Access Control
