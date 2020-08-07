@@ -182,7 +182,29 @@ login: {
 	이메일이 등록된 데이터와 일치하면, 서버는 비밀번호를 재설정 하기 위한 지시 사항과 함께 지정된 방법 및 주소를 사용하여 메세지를 보냅니다. [[#Changing Authentication Parameters][Changing Authentication Parameters]] 섹션에 설명된대로 이메일에는 ~{acc}~ request에 포함할 수 있는 시크릿 코드가 포함되어 있습니다.
 
 ** Suspending a User
+   사용자 계정은 관리자에 의해 정지될 수 있습니다. 계정이 정지되면 사용자는 더이상 로그인 할 수 없고 서비스도 이용할 수 없습니다.
+
+   ~root~ 사용자만이 다른 계정을 정지시킬 수 있습니다. 관리자에 의해 계정이 정지된 사용자는 아래의 메세지를 받습니다.
+
+   #+BEGIN_SRC
+acc: {
+  id: "1a2b3", // string, client-provided message id, optional
+  user: "usr2il9suCbuko", // user being affected by the change
+  status: "suspended"
+}
+   #+END_SRC
+
+   정지가 해제된 계정은 위와 동일한 메세지를 수신하지만 ~status: "ok"~ 값이 담긴 메세지를 수신합니다. 관리자는 ~{get what="desc"}~ 커맨드를 실행하여 사용자의 ~me~ topic을 조회할 수 있습니다.
+
 ** Credential Validation
+   서버는 필요하다면 특정 인증 체계를 이용한 사용자 계정 인증 기능을 선택적으로 구성할 수 있습니다. 예를 들어, 사용자에게 고유한 이메일, 전화번호 등을 제공하도록 요구하거나 계정 등록 조건으로 보안 문자를 해결하도록 요구할 수 있습니다.
+
+   서버는 약간의 설정 변경만으로 이메일 인증을 지원할 수 있습니다. 대부분 잘 동작하며, 문자 메세지를 보내기 위해서는 별도 상용 서비스가 필요하기 때문에  전화번호 인증 기능은 제대로 동작하지 않습니다.
+
+   자격 증명이 활성화 된 상태일 경우, 사용자는 항상 유효성 검사에 통과된 상태여야 합니다. 필수 자격 증명을 변경해야 하는 경우엔 사용자가 먼저 새 자격 증명을 추가하고 유효성 검사를 한 다음 이전 자격 증명을 제거해야 합니다.
+
+   자격 증명은 ~{acc}~ 메세지를 보내 할당되고, ~{set topic="me"}~ 를 통해 추가되고, ~del topic="me"~ 를 통해서 삭제됩니다. 자격 증명은 ~{login}~ 또는 ~{acc}~ 메세지를 전송하여 클라이언트 측에서 확인됩니다.
+
 ** Access Control
 :PROPERTIES:
 :CUSTOM_ID: Access Control
