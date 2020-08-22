@@ -3,7 +3,7 @@
 #+LAYOUT: post
 #+AUTHOR: yeongcheon
 #+DATE: 2020-08-23 00:00:00 +0900
-#+TAGS[]: profile
+#+TAGS[]: profile about
 #+DRAFT: false
 
 #+BEGIN_CENTER
