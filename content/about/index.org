@@ -1,8 +1,8 @@
 #+TITLE: about me
-#+SUBTITLE: 
+#+SUBTITLE: 팀의 개발을 책임진다. 인간 개발자 김영천!
 #+LAYOUT: post
 #+AUTHOR: yeongcheon
-#+DATE: 2020-07-26 00:00:00 +0900
+#+DATE: 2020-08-23 00:00:00 +0900
 #+TAGS[]: profile
 #+DRAFT: false
 
