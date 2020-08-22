@@ -34,5 +34,6 @@ jobs:
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.HUGO_TOKEN }}
-        publish_branch: gh-pages
+        external_repository: YeongCheon/yeongcheon.github.io
+        publish_branch: master
         publish_dir: ./public
