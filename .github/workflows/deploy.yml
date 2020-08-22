@@ -11,5 +11,5 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Deploy yeongcheon.github.io
-      run: deploy.sh
+      run: ./deploy.sh
       
