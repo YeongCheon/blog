@@ -14,6 +14,8 @@ jobs:
       uses: peaceiris/actions-hugo@v2
       with:
         hugo-version: '0.74.2'
+    - name: remove submodule cache
+      run: git rm --cached public -f
     - name: Deploy yeongcheon.github.io
       run: ./deploy.sh
       
