@@ -17,5 +17,7 @@ jobs:
     - name: remove submodule cache
       run: git rm --cached public -f
     - name: Deploy yeongcheon.github.io
+      with:
+        submodules: true
       run: ./deploy_github_actions.sh
       
