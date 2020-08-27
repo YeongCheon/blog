@@ -231,6 +231,28 @@ acc: {
    액세스 권한은 ~{set}~ 메세지를 사용해 사용자별로 할당할 수 있습니다.
 
 * Topics 
+  Topic은 한명 또는 여러명이서 커뮤니케이션을 하는 채널을 의미합니다. 모든 토픽은 persistent property를 가지고 있습니다. 이러한 토픽의 property는 ~{get what="desc"}~ 메세지를 이용해서 쿼리를 요청할 수 있습니다.
+
+  아래의 Topic property 목록은 쿼리를 호출하는 사용자가 누구든 독립적으로 존재합니다.
+
+  + ~created~: Topic이 생성된 시간(timestap)
+  + ~updated~: Topic의 ~public~ 또는 ~private~ 속성이 마지막으로 수정된 시간(timestamp)
+  + ~touched~: Topic에 마지막으로 메세지가 전송된 시간(timestamp)
+  + ~defacs~: 인증 사용자와 익명 사용자를 위한 액세스 모드를 나타내는 속성. 자세한 내용은 [[#Access Control][Access Control]]을 참고하세요
+  + ~auth~: 인증 사용자를 위한 액세스 모드를 나타내는 속성
+  + ~anon~: 익명 사용자를 위한 액세스 모드를 나타내는 속성
+  + ~seq~: Topic에 전송된 최신 ~{data}~ 메세지의 고유 아이디. 서버측에서 생성한 integer 값.
+  + ~public~: Topic을 설명하는 어플리케이션 정의 객체. Topic을 구독할 수 있는 사람은 누구나 Topic의 public data를 조회할 수 있습니다.
+
+  사용자 종속 Topic 속성 목록
+
+  + ~acs~: 현재 사용자의 해당 Topic에 대한 액세스 권한을 나타내는 속성. 자세한 내용은 [[#Access Control][Access Control]]을 참고하세요.
+  + ~want~: 현재 사용자가 요청한 접근 권한
+  + ~given~: 현재 사용자의 접근 권한
+  + ~private~: 현재 사용자 고유의 어플리케이션 정의 객체.
+
+  Topic은 보통 구독자가 있습니다. 구독자 중 한명은 전체 액세스 권한이 있는 Topic 소유자로 지정될 수 있습니다(~O~ 액세스 권한). 구독자 목록은 ~{get what="sub"}~ 메세지를 이용해서 조회할 수 있습니다. 구독자 목록은 ~{meta}~ 메세지의 ~sub~ 섹션 형태로 반환됩니다.
+
 ** ~me~ Topic
 ** ~fnd~ and Tags: Finding Users and Topics
 :PROPERTIES:
