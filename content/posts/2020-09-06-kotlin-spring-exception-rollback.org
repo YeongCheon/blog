@@ -1,0 +1,7 @@
+#+TITLE: 코틀린으로 작성된 스프링 기반 API 트랜잭션 rollback 관리
+#+SUBTITLE: 코틀린으로 작성된 스프링 기반 API에서 Checked Exception 발생 시 rollback이 되지 않도록 해봅시다.
+#+LAYOUT: post
+#+AUTHOR: yeongcheon
+#+DATE: 2020-09-08 23:00:00 +0900
+#+TAGS[]: kotlin spring exception transaction rollback
+#+DRAFT: true
