@@ -138,7 +138,7 @@
 	사용자가 ~{acc login=true}~ 를 셋팅했다면 즉시 인증을 위해 새 계정을 사용할 수 있습니다. ~login=false~ 일 경우엔(또는 설정되지 않았다면) 새 계정은 생성되지만 계정을 생성한 세션의 인증 상태는 변경되지 않습니다. ~login=true~ 일 경우 서버는 생성된 새 계정으로 세션 인증을 시도하고 {acc} 요청에 대한 성공 응답에는 인증 토큰이 포함됩니다. 이 룰은 익명 인증 시에 특히 중요합니다.	
 
 *** Logging in
-	로그인은 ~{login}~ 요청을 통해서 실행됩니다. 로그인은 ~basic~, ~token~ 인증을 통해서만 가능합니다. 모든 로그인은 200 코드와 ~token~ 인증에 사용할 토큰을 ~{ctrl}~ 메세지를 통해 응답 받거나, 300 코드와 추가 인증과 메소드 종속 문제, 또는 4xx 코드와 추가 정보를 요청합니다.^(역자 주: 의역이에요.)
+	로그인은 ~{login}~ 요청을 통해서 실행됩니다. 로그인은 ~basic~, ~token~ 인증을 통해서만 가능합니다. 모든 로그인은 200 코드와 ~token~ 인증에 사용할 토큰을 ~{ctrl}~ 메세지를 통해 응답 받거나, 300 코드와 추가 인증과 메소드 종속 문제, 또는 4xx 코드와 추가 정보를 요청합니다.^{(역자 주: 의역이에요.)}
 
 	토큰에는 서버 구성 만료 시간이 있으므로 주기적으로 갱신해야 합니다.
 
@@ -296,8 +296,23 @@ acc: {
 :PROPERTIES:
 :CUSTOM_ID: Query Language
 :END:
+    Tinode query language는 사용자와 Topic을 검색하기 위한 언어입니다. 쿼리는 공백 또는 쉼표로 구분된 문자열입니다. 각 검색어는 사용가 또는 Topic의 태그들과 일치합니다. 각 검색어는 RTL 방식으로 쓰여졌을 수 있지미만 쿼리는 항상 왼쪽에서 오른쪽 방향으로 파싱됩니다. 공백은 ~AND~ 연산으로 처리되며, 쉼표(앞뒤에 공백이 있는 쉼표 포함)는 ~OR~ 연산으로 처리됩니다. 연산자의 순서는 무시됩니다. ~A~ND 연산자는 AND 연산자끼리, ~OR~ 연산자는 OR 연산자끼리 그룹화됩니다. ~OR~ 연산이 ~AND~ 보다 우선순위가 높습니다. 태그 앞에 쉼표가 오면 ~OR~ 태그, 그렇지 않으면 ~AND~ 로 취급됩니다. 예를 들어, ~aaa bbb, ccc~ (~aaa AND bbb OR ccc~)는 ~(bbb or CCC) AND aaa~ 로 해석됩니다.
+
+	공백이 포함된 검색어는 공백을 언더바(_)로 치환해서 검색해야 합니다 ~‎~ -> ~_~ (예: ~new york~ -> ~new_york~).
+**** Some examples:
+	 + ~flowers~: ~flowers~ 태그가 있는 사용자 또는 Topic을 검색합니다.
+	 + ~flowers travel~: ~flowers~, ~travel~ 두 태그를 모두 포함한 사용자 또는 Topic을 검색합니다.
+	 + ~flowers, travel~: ~flowers~ 또는 ~travel~ 둘 중 하나의 태그라도 포함한 사용자 또는 Topic을 검색합니다(또는 둘 다 포함한).
+	 + ~flowers travel, puppies~: ~flowers~ 를 포함하고 ~travel~ 또는 ~puppies~ 를 포함한 사용자 또는 Topic을 검색합니다(~(travel OR puppies) AND flowers~).
+	 + ~flowers, travel puppies, kitten~: ~flowers~, ~travel~, ~puppies~, ~kittens~ 중 하나라도 포함한 사용자 또는 Topic을 검색합니다. ~travel~ 과 ~puppies~ 사이에 있는 공백은 ~OR~ 연산이 ~AND~ 연산보다 우선하므로 ~OR~ 로 치환됩니다.
+	
 *** Incremental Updates to Queries
+	/현재 지원하지 않는/ 쿼리입니다. 특히 ~fnd.private~ 는 메세지 크기 제한과 기본 데이버테이스 쿼리 크기 제한에 의해서만 제한될 수 있습니다. 전체 쿼리를 다시 작성하여 검색어를 추가하거나 제거하는 대신, 검색어를 점진적으로 추가하거나 제거할 수 있습니다.
+
+	incremental update 요청은 왼쪽에서 오른쪽으로 처리됩니다. 또한 동일한 검색어를 여러 번 포함할 수 있습니다. 즉, ~-a_tag+a_tag~ 는 유효한 요청입니다.
+
 *** Query Rewrite
+	
 *** Possible Use Cases
 ** Peer to Peer Topics
 ** Group Topics
