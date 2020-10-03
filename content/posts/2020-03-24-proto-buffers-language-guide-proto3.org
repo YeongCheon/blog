@@ -9,7 +9,7 @@
 
 * Language Guide(proto3)
 ** Defining A Message Type
-   우선 매우 간단한 예제를 살펴보겠습니다.. 검색 요청을 위한 메세지 타입을 정의하고자 하는데 이 메세지는 쿼리 문자열^(역자 주: query), 요청 페이지^(역자 주: page_number), 그리고 페이지당 결과 갯수^(역자 주: result_per_page)를 가지고 있습니다. 
+   우선 매우 간단한 예제를 살펴보겠습니다.. 검색 요청을 위한 메세지 타입을 정의하고자 하는데 이 메세지는 쿼리 문자열^{(역자 주: query)}, 요청 페이지^{(역자 주: page_number)}, 그리고 페이지당 결과 갯수^{(역자 주: result_per_page)}를 가지고 있습니다. 
 
    #+BEGIN_SRC proto
    syntax = "proto3";
@@ -29,7 +29,7 @@
 *** Assigning Field Numbers
 	위에서 봤듯이, 각 필드는 저마다 *고유한 번호*를 가지고 있습니다. 이 필드 번호들은 메세지를 [[https://developers.google.com/protocol-buffers/docs/encoding][바이너리 포맷]]으로 변환할 때 사용되므로 한번 정의한 이 후 절대로 바꿔서는 안됩니다. 인코딩 시 필드 번호는 1-15 범위까지는 1 바이트, 16에서 2047 범위까지는 2 바이트를 사용합니다(자세한 내용은 [[https://developers.google.com/protocol-buffers/docs/encoding#structure][proto Buffer Encoding]]에서 확인). 그러므로 자주 발생하는 메세지 요소들은 1-15 범위에 할당하는게 좋습니다. 나중에 빈번하게 접근할 요소가 추가될 수 있으므로 미리 여유 공간을 확보해 놓으세요.
 
-	지정할 수 있는 가장 작은 필드 번호는 1, 가장 큰 필드 번호는 2^29 - 1 또는 536870911 입니다. 그리고 19000-19999 범위의 필드 번호는 프로토콜 버퍼 구현을 위해 미리 예약되어 있으므로 사용할 수 없습니다. 만약 당신의 ~.proto~ 파일에서 예약된 필드 번호 중 하나를 사용하면 프로토콜 버퍼 컴파일러는 에러를 반환할 것입니다. 이와 마찬가지로, 이전에 [[https://developers.google.com/protocol-buffers/docs/proto3#reserved][예약된]] 필드 번호도 사용할 수 없습니다.
+	지정할 수 있는 가장 작은 필드 번호는 1, 가장 큰 필드 번호는 2^{29} - 1 또는 536870911 입니다. 그리고 19000-19999 범위의 필드 번호는 프로토콜 버퍼 구현을 위해 미리 예약되어 있으므로 사용할 수 없습니다. 만약 당신의 ~.proto~ 파일에서 예약된 필드 번호 중 하나를 사용하면 프로토콜 버퍼 컴파일러는 에러를 반환할 것입니다. 이와 마찬가지로, 이전에 [[https://developers.google.com/protocol-buffers/docs/proto3#reserved][예약된]] 필드 번호도 사용할 수 없습니다.
 *** Specifying Field Rules
 	메세지 필드는 다음 중 하나일 수 있습니다,
 
@@ -67,7 +67,7 @@
 
 	#+END_SRC
 *** Reserved Fields
-	필드를 완전히 삭제 또는 주석 처리하여 메세지를 업데이트 하면 향후 사용자가 메세지를 업데이트 할 때  필드 번호를 재사용 할 수 있습니다. 이는 만약 이전 버전의 ~.proto~ 파일을 사용할 때 데이터 손상이나 개인정보 문제 등등 심각한 문제가 발생할 수 있습니다. 삭제된 필드의 필드 번호(또는 json 직렬화 문제를 일으킬 수 있는 이름)를 예약하도록 지정하면 이러한 문제가 발생하는 것을 피할 수 있습니다. 만약 향후 사용자가 예약된 필드 식별자^(역자 주: 필드 번호 또는 이름)를 사용하려고 할 경우 프로토콜 버퍼 컴파일러가 경고를 해 줄 것입니다.
+	필드를 완전히 삭제 또는 주석 처리하여 메세지를 업데이트 하면 향후 사용자가 메세지를 업데이트 할 때  필드 번호를 재사용 할 수 있습니다. 이는 만약 이전 버전의 ~.proto~ 파일을 사용할 때 데이터 손상이나 개인정보 문제 등등 심각한 문제가 발생할 수 있습니다. 삭제된 필드의 필드 번호(또는 json 직렬화 문제를 일으킬 수 있는 이름)를 예약하도록 지정하면 이러한 문제가 발생하는 것을 피할 수 있습니다. 만약 향후 사용자가 예약된 필드 식별자^{(역자 주: 필드 번호 또는 이름)}를 사용하려고 할 경우 프로토콜 버퍼 컴파일러가 경고를 해 줄 것입니다.
 	#+BEGIN_SRC proto
 	message Foo {
       reserved 2, 15, 9 to 11;
@@ -98,13 +98,13 @@
 | unit64      | 가변 길이 인코딩을 사용합니다.                                                                                              | unit64   | long       | int/long    | uint64  | Bignum                         | ulong      | integer/string | Int64     |
 | sint32      | 가변 길이 인코딩을 사용합니다. 부호있는 int 값. 일반 int32보다 음수를 더 효율적으로 인코딩합니다.                           | int32    | int        | int         | int32   | Fixnum or Bignum(as required)  | int        | integer        | int       |
 | sint64      | 가변 길이 인코딩을 사용합니다. 부호있는 int 값. 일반 int64보다 음수를 더 효율적으로 인코딩합니다.                           | int64    | long       | int/long    | int64   | Bignm                          | long       | integer/string | Int64     |
-| fixed32     | 항상 4 바이트 크기를 갖습니다. 2^28 이상의 값을 사용할 경우 uint32보다 효율적입니다.                                         | uint32   | int        | int/long    | uint32  | Fixnum or Bignum(as required)  | uint       | integer        | int       |
-| fixed64     | 항상 8 바이트 크기를 갖습니다. 2^28 이상의 값을 사용할 경우 uint64보다 효율적입니다.                                         | unit64   | long       | int/long    | uint64  | Bignum                         | ulong      | integer/string | Int64     |
+| fixed32     | 항상 4 바이트 크기를 갖습니다. 2^{28} 이상의 값을 사용할 경우 uint32보다 효율적입니다.                                       | uint32   | int        | int/long    | uint32  | Fixnum or Bignum(as required)  | uint       | integer        | int       |
+| fixed64     | 항상 8 바이트 크기를 갖습니다. 2^{28} 이상의 값을 사용할 경우 uint64보다 효율적입니다.                                       | unit64   | long       | int/long    | uint64  | Bignum                         | ulong      | integer/string | Int64     |
 | sfixed32    | 항상 4 바이트 크기를 갖습니다.                                                                                              | int32    | int        | int         | int32   | Fixnum or Bignum(as required)  | int        | integer        | int       |
 | sfixed64    | 항상 8 바이트 크기를 갖습니다.                                                                                              | int64    | long       | int/long    | int64   | Bignum                         | long       | integer/string | int64     |
 | bool        |                                                                                                                             | bool     | boolean    | bool        | bool    | TrueClsas/FalseClass           | bool       | boolean        | bool      |
-| string      | 문자열 타입은 항상 UTF-8 또는 7비트 아스키 텍스트로 구성되어야 하며, 2^32 길이보다 길 수 없습니다.                           | string   | String     | str/unicode | string  | String(UTF-8)                  | string     | string         | String    |
-| bytes       | 2^32 길이 이하의 임이의 바이트 시퀀스를 포함 할 수 있습니다.                                                                                                                | string   | ByteString | str         | []byte  | String(ASCII-8BIT)             | ByteString | string         | List<int> |
+| string      | 문자열 타입은 항상 UTF-8 또는 7비트 아스키 텍스트로 구성되어야 하며, 2^{32} 길이보다 길 수 없습니다.                         | string   | String     | str/unicode | string  | String(UTF-8)                  | string     | string         | String    |
+| bytes       | 2^{32} 길이 이하의 임이의 바이트 시퀀스를 포함 할 수 있습니다.                                                                                                              | string   | ByteString | str         | []byte  | String(ASCII-8BIT)             | ByteString | string         | List<int> |
    [[https://developers.google.com/protocol-buffers/docs/encoding][프로토콜 버퍼 인코딩]]에서 메세지를 직렬화 할 때 이러한 타입딀 인코딩 되는 방법에 대해 자세히 알아볼 수 있습니다.
 ** Default Values
    메세지를 파싱할 때 인코딩 된 메세지에 특정 특이 요소가 포함되어 있지 않으면 파싱된 객체의 해당 필드가 해당 필드의 기본값으로 설정됩니다. 이 기본값은 유형별로 다릅니다.
@@ -117,11 +117,11 @@
    + 메세지 필드의 경우, 필드 값은 셋팅되지 않습니다. 정확한 값은 종속된 언에 따라 다릅니다. 자세한 내용은 [[https://developers.google.com/protocol-buffers/docs/reference/overview][코드 생성 가이드]]를 참고하세요.
    반복 필드 타입의 기본값은 빈 값입니다(일반적으로 프로그래밍 언어에선 빈 list 타입을 갖습니다).
 
-   스칼라 메세지 필드의 경우, 한번 메세지가 파싱되면 필드가 기본값(ex: boolean 필드가 false로 설정)이 명시적으로 설정었는지 또는 설정되지 않았는지 알 방법이 없습니다. 메세지 타입을 정의 할 때 주의하세요. 예들 들어, 만약 당신이 이런 동작을 원치 않는다면 일부 필드값을 ~false~ 로 설정하는 작업은 하지 마세요^(역자 주: 번역이 잘 된건지 모르겠네요..). 또한 스칼라 타입 메세지 필드가 기본값 설정된 경우, 그 값은 직렬화 되지 않습니다.
+   스칼라 메세지 필드의 경우, 한번 메세지가 파싱되면 필드가 기본값(ex: boolean 필드가 false로 설정)이 명시적으로 설정었는지 또는 설정되지 않았는지 알 방법이 없습니다. 메세지 타입을 정의 할 때 주의하세요. 예들 들어, 만약 당신이 이런 동작을 원치 않는다면 일부 필드값을 ~false~ 로 설정하는 작업은 하지 마세요^{(역자 주: 번역이 잘 된건지 모르겠네요..)}. 또한 스칼라 타입 메세지 필드가 기본값 설정된 경우, 그 값은 직렬화 되지 않습니다.
 
    [[https://developers.google.com/protocol-buffers/docs/reference/overview][코드 생성 가이드]]에서 당신이 사용하는 언어에 대해서 기본적으로 어떻게 코드를 생성하는지 자세히 알아보세요.
 ** Enumerations
-   메세지를 선언할 때, 미리 정의된 값들이 필요한 경우가 있습니다. 예를 들어, 당신이 각 ~SearchRequest~ 마다 ~corpus~ 필드를 추가하고 싶다고 가정해봅시다. corpus 필드는 ~UNIVERSAL~, ~WEB~, ~IMAGES~, ~LOCAL~, ~NEWS~, ~PRODUCTS~, ~VIDEO~ 값 중 하나를 가질 수 있습니다. 당신의 메세지 타입에 간단하게 열거형^(역자 주: enum) 상수값을 추가할 수 있습니다.
+   메세지를 선언할 때, 미리 정의된 값들이 필요한 경우가 있습니다. 예를 들어, 당신이 각 ~SearchRequest~ 마다 ~corpus~ 필드를 추가하고 싶다고 가정해봅시다. corpus 필드는 ~UNIVERSAL~, ~WEB~, ~IMAGES~, ~LOCAL~, ~NEWS~, ~PRODUCTS~, ~VIDEO~ 값 중 하나를 가질 수 있습니다. 당신의 메세지 타입에 간단하게 열거형^{(역자 주: enum)} 상수값을 추가할 수 있습니다.
 
    #+BEGIN_SRC proto
    message SearchRequest {
@@ -165,7 +165,7 @@
 
    ~enum~ 타입이 당신의 어플리케이션에서 어떻게 동작하는지 자세히 알고싶다면, 해당 언어에 해당하는 [[ In either case, if the message is serialized the unrecognized value will still be serialized with the message. ][코드 생성 가이드]]를 참고하세요.
 *** reserved Values
-	만약 enum 타입 값을 완전히 제거하거나 주석처리하여 enum을 업데이트 하면 향 후 사용자가 직접 업데이트 할 때 해당 숫자 값을 재사용 할 수 있습니다. ~.proto~ 파일의 이전버전을 사용할 경우 이는 데이터 손상, 개인 정보 보호 이슈 등등 심각한 문제가 발생할 수 있습니다. 삭제된 enum 값의 필드 번호(또는 json 직렬화 문제를 일으킬 수 있는 이름)를 ~예약~ 하도록 지정하면 이러한 문제가 발생하는 것을 피할 수 있습니다. 만약 향후 사용자가 예약된 enum 값의 식별자를 사용하려고 할 경우 프로토콜 버퍼 컴파일러가 경고를 해 줄 것입니다. ~max~ 키워드를 사용하면 예약 된 숫자 값 범위를 최대 값^(역자 주: 32bit integer의 최댓값)까지 지정할 수 있습니다.
+	만약 enum 타입 값을 완전히 제거하거나 주석처리하여 enum을 업데이트 하면 향 후 사용자가 직접 업데이트 할 때 해당 숫자 값을 재사용 할 수 있습니다. ~.proto~ 파일의 이전버전을 사용할 경우 이는 데이터 손상, 개인 정보 보호 이슈 등등 심각한 문제가 발생할 수 있습니다. 삭제된 enum 값의 필드 번호(또는 json 직렬화 문제를 일으킬 수 있는 이름)를 ~예약~ 하도록 지정하면 이러한 문제가 발생하는 것을 피할 수 있습니다. 만약 향후 사용자가 예약된 enum 값의 식별자를 사용하려고 할 경우 프로토콜 버퍼 컴파일러가 경고를 해 줄 것입니다. ~max~ 키워드를 사용하면 예약 된 숫자 값 범위를 최대 값^{(역자 주: 32bit integer의 최댓값)}까지 지정할 수 있습니다.
    #+BEGIN_SRC proto
    enum Foo {
      reserved 2, 15, 9 to 11, 40 to max;
@@ -253,7 +253,7 @@
    + 만약 당신이 새 필드를 추가해도 기존의 메세지들도 여전히 새로 생성된 코드를 통해서 파싱 후 직렬화 될 것입니다. 새로 추가된 코드와 기존 코드가 잘 상호작용 할 수 있도록 [[https://developers.google.com/protocol-buffers/docs/proto3#default][기본값]]에 신경쓰세요. 새 코드로 작성된 메세지는 여전히 기존 코드를 파싱할 수 있습니다. 기존 코드는 새로 추가된 필드를 무시합니다. 자세한 내용은 [[https://developers.google.com/protocol-buffers/docs/proto3#unknowns][알 수 없는 필드]] 섹션을 참고하세요.
    + 메세지 필드는 제거할 수 있지만, 해당 필드 번호가 추 후 재사용 되지 않도록 주의해야 합니다.
    + 필드 이름을 바꾸고 싶다면 필드 이름 앞에 "OBSOLETE_" 접두사를 추가하거나 필드 번호를 [[https://developers.google.com/protocol-buffers/docs/proto3#reserved][예약]]하여 향 후 ~.proto~ 사용자가 실수로라도 번호를 재사용 할 수 없도록 할 수 있습니다.
-   + ~int32~, ~uint32~, ~int64~, ~uint64~, ~bool~ 타입은 모두 호환 가능합니다. 이 말은 이러한 필드 타입을 변형 없이 다른 필드 타입으로 변경할 수 있다는 뜻입니다^(역자 주: int32 -> uint32 또는 int64 -> uint64 변경 가능). 만약 규격을 벗어난 숫자를 타입 변경하면 C++ 언어에서 해당 타입으로 숫자를 캐스팅 한 것과 같은 효과를 얻을 수 있습니다(예: 64비트 숫자를 int32로 읽은 경우, 32bit로 잘립니다).
+   + ~int32~, ~uint32~, ~int64~, ~uint64~, ~bool~ 타입은 모두 호환 가능합니다. 이 말은 이러한 필드 타입을 변형 없이 다른 필드 타입으로 변경할 수 있다는 뜻입니다^{(역자 주: int32 -> uint32 또는 int64 -> uint64 변경 가능)}. 만약 규격을 벗어난 숫자를 타입 변경하면 C++ 언어에서 해당 타입으로 숫자를 캐스팅 한 것과 같은 효과를 얻을 수 있습니다(예: 64비트 숫자를 int32로 읽은 경우, 32bit로 잘립니다).
    + ~sint32~, ~sint64~ 필드는 서로 호환되지만 다른 integer 타입과는 호환되지 않습니다.
    + ~string~, ~bytes~ 타입의 경우 bytes 타입이 유효한 UTF-8 값이면 서로 호환됩니다.
    + 메세지 필드 타입의 경우 bytes에 인코딩 된 메세지의 버전이 포함되어 있는 경우 bytes와 호환됩니다.
@@ -299,7 +299,7 @@
 ** Oneof
    많은 필드를 가진 메시지가 있고, 동시에 최대 하나의 필드가 설정되는 경우, oneof 기능을 통해 해당 동작을 시행하여 메모리를 절약할 수 있습니다.
 
-   Oneof 필드는 일반 필드와 유사하지만 oneof 필드 공유 메모리의 필드와는 다르고^(역자 주: 번역이 이상한거 같군요..ㅠㅠ), 동시에 최대 하나의 필드를 설정할 수 있습니다. 멤버 중 하나를 설정하면 다른 모든 멤버가 자동으로 oneof 필드에 채워집니다. ~oneof~ 필드가 존재한다면 선택한 언어에 따라 특별한 ~case()~ 또는 ~WhichOneof()~ 메서드를 사용하여 oneof 값이 설정되어 있는지 확인할 수 있습니다.
+   Oneof 필드는 일반 필드와 유사하지만 oneof 필드 공유 메모리의 필드와는 다르고^{(역자 주: 번역이 이상한거 같군요..ㅠㅠ)}, 동시에 최대 하나의 필드를 설정할 수 있습니다. 멤버 중 하나를 설정하면 다른 모든 멤버가 자동으로 oneof 필드에 채워집니다. ~oneof~ 필드가 존재한다면 선택한 언어에 따라 특별한 ~case()~ 또는 ~WhichOneof()~ 메서드를 사용하여 oneof 값이 설정되어 있는지 확인할 수 있습니다.
 *** Using Oneof
 	~.proto~ 파일에 ~oneof~ 를 정의하려면 ~oneof~ 키워드와 ~oneof~ 이름을 지정해야 합니다(아래의 예제에선 ~test_oneof~).
 	#+BEGIN_SRC proto
