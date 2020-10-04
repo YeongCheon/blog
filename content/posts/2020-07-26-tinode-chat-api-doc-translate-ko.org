@@ -312,7 +312,15 @@ acc: {
 	incremental update 요청은 왼쪽에서 오른쪽으로 처리됩니다. 또한 동일한 검색어를 여러 번 포함할 수 있습니다. 즉, ~-a_tag+a_tag~ 는 유효한 요청입니다.
 
 *** Query Rewrite
-	
+login, 전화번호 또는 이메일로 사용자를 찾으려면 ~alice@example.com~ 대신 ~email:alice@example.com~ 같이 접두사를 사용하여 검색어를 작성해야 합니다. 이러한 방법은 사용자가 직접 쿼리를 배워야 하기 때문에 문제가 될 수 있습니다. tinode는 이 문제를 서버에서 /쿼리를 재작성/ 하는 방식으로 문제를 해결했습니다. 만약 검색어가 접두사가 없을 경우, 서버가 적절한 접두사를 붙여 쿼리를 재작성 합니다. ~fnd.public~ 에 대한 쿼리에서 원래 용어도 유지되고(쿼리문 ~alice@example.com~ 은 ~email:alice@example.com OR alice@example~ 로 재작성 됩니다.) ~fnd.private~ 에 대한 쿼리에서는 다시 작성된 검색어만 유지됩니다(~alice@example.com~ 쿼리는 ~email:alice@example.com~ 으로 재작성 됩니다.). ~alice@example~ 처럼 이메일처럼 보이는 모든 검색어는 ~email:alice@example.com OR alice@example.com~ 처럼 재작성 됩니다. 전화번호처럼 보이는 용어는 [[https://en.wikipedia.org/wiki/E.164][E.164]] 형식으로 변환되고 ~tel:+14155551212 OR +14155551212~ 형식으로 재작성됩니다. 그리고 ~fnd.public~ 에 대한 쿼리에서 로그인처럼 보이는 접두사가 없는 모든 용어는 ~alice~ -> ~basic:alice OR alice~ 형식으로 재작성 됩니다.
+
+위에서 설명한대로 전화번호처럼 보이는 태그는 E.164 형식으로 변환됩니다. 이러한 변환에는 ISO3166-1 alpha-2 국가코드가 필요합니다. 전화번호 태그를 E.164 형식으로 변환하는 로직은 아래와 같습니다.
+
+  + 태그에 이미 국가 전화코드가 포함되어 있으면 그대로 사용합니다. ~+1(415)555-1212~ -> ~+14155551212~.
+  + 만약 태그에 접두사가 없다면, ~{hi}~ 메세지를 통해 설정된 클라이언트의 ~lang~ 필드를 참고하여 국가코드를 설정합니다.
+  + 만약 클라이언트 ~hi.lang~ 값을 통해 국가코드를 추출하지 못했다면, ~tinode.conf~ 파일에 설정된 ~default_country_code~ 필드값을 이용해 국가코드를 설정합니다.
+  + ~tinode.conf~ 파일의 ~default_country_code~ 값이 없을 경우, ~us~ 국가코드를 기본값으로 사용합니다.
+
 *** Possible Use Cases
 ** Peer to Peer Topics
 ** Group Topics
