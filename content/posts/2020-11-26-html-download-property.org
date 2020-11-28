@@ -1,5 +1,5 @@
 #+TITLE: HTML의 download 속성
-#+SUBTITLE: 
+#+SUBTITLE: HTML의 download 속성
 #+LAYOUT: post
 #+AUTHOR: yeongcheon
 #+DATE: 2020-11-28 22:00:00 +0900
