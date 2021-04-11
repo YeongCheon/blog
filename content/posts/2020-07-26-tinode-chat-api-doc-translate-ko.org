@@ -4,7 +4,7 @@
 #+AUTHOR: yeongcheon
 #+DATE: 2020-07-26 00:00:00 +0900
 #+TAGS[]: tinode golang chat 
-#+DRAFT: true
+#+DRAFT: false
 
 매번 [[https://github.com/tinode/chat/blob/master/docs/API.md][영어문서]] 보기 빡쳐서 직접 번역기 돌려가며 쓰는 번역본. +번역기와 의역, 오역 범벅입니다.+ 가급적이면 [[https://github.com/tinode/chat/blob/master/docs/API.md][공식 문서]]를 보세요.
 
@@ -368,7 +368,10 @@ Tinode는 서버측에서 생성한 메세지 ID를 ~{data}~ 메세지 형태로
 
 빈 ~ua=""~ /user agent/ 값은 허용되지 않습니다. 즉, 사용자가 비어있지 않은 /user agent/ 값을 가지고 ~me~ topic과 연결된 이후 다시 빈 /user agent/ 를 보낸다면 이 변경은 허용되지 않습니다. 빈 /user agent/ 값은 무시됩니다.
 
-* Public and Private Fields 
+* Public and Private Fields
+:PROPERTIES:
+:CUSTOM_ID: Public and Private Fields
+:END:
 Topic과 관련 구독들은 ~public~, ~private~ 필드를 가지고 있습니다. 일반적으로, 이런 필드는 응용 프로그램에서 정의됩니다. 서버는 ~fnd~ topic을 제외하고 이러한 필드 구조를 강제하지 않습니다. 동시에, 클라이언트 소프트웨어는 상호 호환성을 위해 동일한 형식을 사용해야 합니다.
 
 ** Public
@@ -429,6 +432,9 @@ private: {
 ~fnd~ topic의 ~private~ 필드는 [[#Query Language][검색 쿼리]]를 나타내는 문자열이 될 것으로 예상됩니다.
 
 * Format of Content
+:PROPERTIES:
+:CUSTOM_ID: Format of Content
+:END:
 
 ~{pub}~, ~{data}~ 메세지의 ~content~ 필드 형식은 응용 프로그램에서 정의되므레 서버는 이 필드에 특정 형식을 강요하지 않습니다. 클라이언트 소프트웨어는 상호 호환성을 위해 동일한 형식을 사용해야 합니다. 현재는 다음 두 가지 유형의 콘텐츠가 지원됩니다.
 
@@ -455,35 +461,748 @@ Tinode는 대용량 파일을 위해 업로드용 endpoint ~/v0/file/u~, 다운�
 + Cookies ~auth~ and ~secret~
 
 ** Uploading
+파일 업로드는 RFC 2388 multipart request를 생성 후 HTTP POST 형식으로 서버에 전송하는 방식으로 진행된다. 서버는 업로드 된 파일에 접근할 수 있는 URL이 포함된 ~307 Temporary Redirect~ 응답 또는 ~200 OK~ 와 ~{ctrl}~ 메세지를 포함한 responst body를 반환합니다.
+
+#+BEGIN_SRC 
+ctrl: {
+  params: {
+    url: "/v0/file/s/mfHLxDWFhfU.pdf"
+  },
+  code: 200,
+  text: "ok",
+  ts: "2018-07-06T18:47:51.265Z"
+}
+#+END_SRC
+
+~307 Temporary Redirect~ 응답을 받았다면 클라이언트는 반드시 전달받은 URL을 이용에 업로드를 다시 시도해야합니다. 이 후 모든 업로드는 기본 URL을 이용해 업로드를 시도해야합니다.
+
+~ctrl.params.url~ 에는 현재 서버에 업로드된 파일의 위치를 나타냅니다. 이 경로는 ~/v0/file/s/mfHLxDWFhfU.pdf~ 같은 절대경로, 또는 ~./mfHLxDWFhfU.pdf~ 같은 상대경로, 또는 ~mfHLxDWFhfU.pdf~ 같은 단순한 파일명이 될 수 있습니다. 전체 경로를 제외한 모든 항목은 기본 다운로드 endpoint ~/v0/file/s~ 위치를 중심으로 나타냅니다. 예를 들어, 만약 ~mfHLxDWFhfU.pdf~ 을 응답값으로 받았다면 파일 위치는 ~http(s)://current-tinode-server/v0/file/s/mfHLxDWFhfU.pdf~ 가 됩니다.
+
+업로드 직후, 또는 리디렉션 후 파일의 URL이 수신되면 클라이언트는 URL을 사용하여 업로드 된 파일과 함께 ~{pub}~ 메세지를 첨부 파일로 보낼 수 있습니다. URL은 [[https://github.com/tinode/chat/blob/master/docs/drafty.md][Dratfy]]-formatted 형식의 ~pub.content~ 필드를 생성하거나 ~pub.heade.attachments~ 필드에서 참조하는데 사용됩니다.
+
+#+BEGIN_SRC
+pub: {
+  id: "121103",
+  topic: "grpnG99YhENiQU",
+  head: {
+    attachments: ["/v0/file/s/sJOD_tZDPz0.jpg"],
+    mime: "text/x-drafty"
+  },
+  content: {
+    ent: [
+    {
+      data: {
+      mime: "image/jpeg",
+      name: "roses-are-red.jpg",
+      ref:  "/v0/file/s/sJOD_tZDPz0.jpg",
+      size: 437265
+    },
+      tp: "EX"
+    }
+  ],
+  fmt: [
+    {
+      at: -1,
+    key:0,
+    len:1
+    }
+  ]
+  }
+}
+#+END_SRC
+
+~head.attachments~ 필드에 URL을 나열하는 것이 중요합니다. Tinode 서버는 이 필드를 사용하여 업로드 된 파일의 갯수를 파악합니다. 필드의 list 길이가 0이 되면(예를 들어 URL이 들어있는 메세지가 삭제되거나 클라이언트가 head.attachments 필드에 URL을 포함하지 못했을 경우), 서버는 파일을 삭제하기 위해 garbage collection에 추가합니다. 상대경로 URL을 사용해야만 합니다. ~head.attachments~ 필드의 절대경로 URL는 무시됩니다. URL은 업로드에 대항 응답으로 반환된 ~ctrl.params.url~ 값이어야 합니다.
+
 ** Downloading
+HTTP GET 형식으로 ~/v0/files/s~ URL로 요청하면 파일을 다운로드 할 수 있습니다. 클라이언트는 이 주소를 중심으로 상대경로를 파악해야 합니다. 예를 들어, ~mfHLxDWFhfU.pdf~ 또는 ~./mfHLxDWFhfU.pdf~ 값은 ~/v0/file/s/mfHLxDWFhfU.pdf~ URL로 서버에 요청해야 합니다.
+
 * Push Notifications 
+
+Tinode는 푸시 알림을 처리하기 위해 컴파일 타임 어댑터를 사용합니다. 서버는 [[https://github.com/tinode/chat/blob/master/server/push/tnpg][Tinode Push Gateway]], [[https://firebase.google.com/docs/cloud-messaging/][Google FCM]], ~stdout~ 어댑터를 제공합니다. Tinode Push Gateway와 Google FCM은 Play Services와 함께 안드로이드를 지원하며(일부 중국폰은 지원하지 않을 수 있습니다.) iOS기기 및 사파리를 제외한 모든 메이저 웹 브라우저를 지원합니다. ~stdout~ 어댑터는 실제로 푸시 알림을 지원하지는 않습니다.이 어댑터는 디버깅이나 테스트, 로깅 등의 작업을 수행할 때 매우 유용합니다. [[https://intl.cloud.tencent.com/product/tpns][TNPS]] 같은 다른 푸시 알림은 직접 어댑터를 작성할 수 있습니다.
+
+만약 직접 커스텀 플러그인을 작성했다면, 알림 payload는 아래와 같은 형식을 따라야 합니다.
+
+#+BEGIN_SRC
+{
+  topic: "grpnG99YhENiQU", // Topic which received the message.
+  xfrom: "usr2il9suCbuko", // ID of the user who sent the message.
+  ts: "2019-01-06T18:07:30.038Z", // message timestamp in RFC3339 format.
+  seq: "1234", // sequential ID of the message (integer value sent as text).
+  mime: "text/x-drafty", // optional message MIME-Type.
+  content: "Lorem ipsum dolor sit amet, consectetur adipisci", // The first 80 characters of the message content as plain text.
+}
+#+END_SRC 
+
 ** Tinode Push Gateway
+
+Tinode Push Gateway(TNPG)는 Tinode를 대신하여 푸시 알림을 보내는 Tinode 독점 서비스입니다. 내부적으로 Google FCM을 사용하므로 FCM과 동일한 플랫폼을 지원합니다. TNPG의 주요 장점은 FCM보다 설정을 좀 더 쉽게 할 수 있다는 것입니다. 모바일 클라이언트를 다시 컴파일 할 필요가 없으며 서버만 업데이트 하면 됩니다.
+
 ** Google FCM
+
+[[https://firebase.google.com/docs/cloud-messaging/][Google FCM]]은 [[https://developers.google.com/android/guides/overview][Android Play]] 서비스, iPhone 및 iPad 기기 및 Safari를 제외한 모든 메이저 웹 브라우저를 지원합니다. FMC 모바일 클라이언트(iOS, Android)를 사용하려면 Google에서 얻은 사용자 인증 정보로 다시 컴파일해야 합니다. 자세한 내용은 [[https://github.com/tinode/chat/tree/master/server/push/fcm][여기]]를 참고하세요.
+
 ** Stdout
+
+~stdout~ 어댑터는 디버깅이나 로깅 작업에 매우 유용합니다. ~STDOUT~ 에 push payload를 전달하여 파일에 기록하거나 다른 프로세스에서 읽도록 할 수 있습니다.
+
 * Messagse
+
+메세지는 논리적 연관 데이터 세트입니다. 메세지는 JSON 형식의 UTF-8 텍스트로 전달됩니다.
+
+모든 클라이언트가 서버로 메세지에는 ~id~ 필드가 있을 수 있습니다. 이는 클라이언트가 메시지를 수신하고 처리했다고 서버에게 알리는 수단으로서 사용됩니다. ~id~ 는 세션 고유 문자열이어야하지만 임의의 문자열이 될 수 있습니다. 서버는 JSON 유효성을 확인하는 것 외에는 어떤 해석을 시도하지 않습니다. ~id~ 는 서버가 클라이언트 메세지에 회신할 때 변경되지 않은 상태로 반환됩니다.
+
+서버는 반드시 쌍따옴표로 감싼 필드명으로 이루어진 엄격한 JSON 규격을 준수해야 합니다. 간결함을 위해 아래의 표기법은 필드 이름과 외부 중괄호 주위의 쌍따옴표를 생략합니다. 예제에서는 설명을 위해서만 ~//~ 주석을 사용합니다. 주석은 실제 서버 통신에서는 사용할 수 없습니다.
+
+어플리케이션 정의 데이터를 업데이트 하기 위한 데이터는 ~{set}~, ~private~ 또는 ~public~ 같은 필드들이 있지만, 서버에서 데이터를 지우고자 할 때는 단일 유니코드 ~␡~(~\u2421~) 문자가 있는 문자열을 사용하세요. 예를 들어, ~"public": null~ 을 보내면 해당 필드는 지워지지 않지만 ~"public":"␡"~ 을 보내면 지워집니다.
+
+인식되지 않는 필드는 서버에서 자동으로 무시됩니다.
+
 ** Client to Server Messages 
+
 *** ~{hi}~
+
+클라이언트가 서버에서 버전과 user agent 정보를 알리는 핸드쉐이크 메세지입니다. 이 메세지는 서버에 반드시 가장 먼저 보내야 합니다. 서버는 ~{ctrl}~ 에 서버 빌드 버전, wire 프로토콜 버전, long polling 방식의 경우 서버 세션 ID 및 sid 등등을 ~ctrl.params~ 필드에 담은 응답값을 반환합니다.
+
+#+BEGIN_SRC
+hi: {
+  id: "1a2b3",     // string, client-provided message id, optional
+  ver: "0.15.8-rc2", // string, version of the wire protocol supported by the client, required
+  ua: "JS/1.0 (Windows 10)", // string, user agent identifying client software,
+                   // optional
+  dev: "L1iC2...dNtk2", // string, unique value which identifies this specific
+                   // connected device for the purpose of push notifications; not
+                   // interpreted by the server.
+                   // see [Push notifications support](#push-notifications-support); optional
+  platf: "android", // string, underlying OS for the purpose of push notifications, one of
+                   // "android", "ios", "web"; if missing, the server will try its best to
+                   // detect the platform from the user agent string; optional
+  lang: "en-US"    // human language of the client device; optional
+}
+#+END_SRC
+
+user agent값인 ~ua~ 값은 가급적이면 [[http://tools.ietf.org/html/rfc7231#section-5.5.3][RFC 7231 section 5.5.3]]의 권장사항을 따르겠지만 항상 따르는 것은 아닙니다. ~ua~, ~dev~ 및 ~lang~ 값을 업데이트 하기 위해서 메세지를 두 번 이상 보낼 수 있습니다. 여러번 전송되는 경우 첫번째 메세지 이후의 메세지들의 ~ver~ 값은 첫번째 메세지와 동일하거나 아예 명시하지 않아야 합니다.
+
+
 *** ~{acc}~
 :PROPERTIES:
 :CUSTOM_ID: acc
 :END:
+
+~{acc}~ 메세지는 사용자를 생성하거나 ~tags~ 정보를 수정, 또는 ~scheme~, ~secret~ 값을 이용해 기존 사용자로 로그인을 할 수 있습니다. 계정을 새로 생성하려면 ~user~ 필드에 ~new~ 값을 설정하고 선택적으로 뒤에 문자열을 추가할 수 있습니다(예: ~newr15gsr~). 인증된 세션이나 인증 세션은 ~{acc}~ 메세지를 보내 새 사용자를 만들 수 있습니다. 인증 데이터를 업데이트하거나 현재 사용자의 인증정보를 확인하려면 사용자를 설정하지 않은 상태로 유지합니다.
+
+~{acc}~ 메세지는 이미 존재하는 사용자의 ~desc~, ~cred~ *값을 수정할 수 없습니다.* 대신 ~me~ topic을 사용해 업데이트하세요.
+
+#+BEGIN_SRC
+acc: {
+  id: "1a2b3", // string, client-provided message id, optional
+  user: "new", // string, "new" to create a new user, default: current user, optional
+  token: "XMgS...8+BO0=", // string, authentication token to use for the request if the
+               // session is not authenticated, optional
+  status: "ok", // change user's status; no default value, optional.
+  scheme: "basic", // authentication scheme for this account, required;
+               // "basic" and "anon" are currently supported for account creation.
+  secret: base64encode("username:password"), // string, base64 encoded secret for the chosen
+              // authentication scheme; to delete a scheme use a string with a single DEL
+              // Unicode character "\u2421"; "token" and "basic" cannot be deleted
+  login: true, // boolean, use the newly created account to authenticate current session,
+              // i.e. create account and immediately use it to login.
+  tags: ["alice johnson",... ], // array of tags for user discovery; see 'fnd' topic for
+              // details, optional (if missing, user will not be discoverable other than
+              // by login)
+  cred: [  // account credentials which require verification, such as email or phone number.
+    {
+      meth: "email", // string, verification method, e.g. "email", "tel", "recaptcha", etc.
+      val: "alice@example.com", // string, credential to verify such as email or phone
+      resp: "178307", // string, verification response, optional
+      params: { ... } // parameters, specific to the verification method, optional
+    },
+  ...
+  ],
+
+  desc: {  // object, user initialisation data closely matching that of table
+           // initialisation; used only when creating an account; optional
+    defacs: {
+      auth: "JRWS", // string, default access mode for peer to peer conversations
+                   // between this user and other authenticated users
+      anon: "N"  // string, default access mode for peer to peer conversations
+                 // between this user and anonymous (un-authenticated) users
+    }, // Default access mode for user's peer to peer topics
+    public: { ... }, // application-defined payload to describe user,
+                // available to everyone
+    private: { ... } // private application-defined payload available only to user
+                // through 'me' topic
+  }
+}
+#+END_SRC
+
+서버는 ~{ctrl}~ 에 새 사용자의 정보를 담고 있는 ~params~ 를 포함한 응답값을 반환합니다. 만약 ~desc.defacs~ 값이 없다면, 서버는 서버 기본 액세스 값을 할당합니다.
+
+계정 생성에 지원되는 유일한 인증 방법은 ~basic~, ~anonymous~ 입니다.
+
 *** ~{login}~
 :PROPERTIES:
 :CUSTOM_ID: login
 :END:
+
+
+로그인은 현재 세션을 인증하는 데 사용됩니다.
+
+#+BEGIN_SRC
+login: {
+  id: "1a2b3",     // string, client-provided message id, optional
+  scheme: "basic", // string, authentication scheme; "basic",
+                   // "token", and "reset" are currently supported
+  secret: base64encode("username:password"), // string, base64-encoded secret for the chosen
+                  // authentication scheme, required
+  cred: [
+    {
+      meth: "email", // string, verification method, e.g. "email", "tel", "captcha", etc, required
+      resp: "178307" // string, verification response, required
+    },
+  ...
+  ],   // response to a request for credential verification, optional
+}
+#+END_SRC
+
+서버는 ~{login}~ 패킷에 ~{ctrl}~ 메세지를 응답값으로 반환합니다. 메세지의 ~params~ 에는 현재 로그인 한 사용자의 ~user~ 정보가 포함되어 있습니다. ~token~ 값에는 인증에 사용할 수 있는 암호화 된 문자열이 포함되어 있습니다. ~expires~ 값은 토큰의 만료시간을 나타냅니다.
+
+
 *** ~{sub}~
 :PROPERTIES:
 :CUSTOM_ID: sub
 :END:
+
+~{sub}~ 패킷은 다음과 같은 기능을 제공합니다.
++ 새 topic 생성
++ 이미 존재하는 topic 구독
++ 이전에 구독한 topic에 세션 연결
++ topic 데이터 가져오기
+
+사용자는 ~{sub}~ 패킷의 ~topic~ 필드에 ~"new"~ 값을 담아 전송하면 새 그룹 topic을 생성할 수 있습니다. 서버는 topic을 생성하고 새로 생성된 topic의 이름을 세션에 응답값으로 반환합니다.
+
+사용자는 ~{sub}~ 패킷의 ~topic~ 필드에 대상 사용자의 ID값을 담아 전송하면 1대1(peer to peer) topic을 생성할 수 있습니다.
+
+topic을 새로 생성하면 생성한 사용자는 항상 해당 topic을 구독하며 현재 연결된 세션에 topic이 연결됩니다.
+
+사용자가 topic과 관계가 없을 경우 ~{sub}~ 패킷을 보내면 topic이 생성됩니다. 구독은 세션의 사용자와 topic 사이에 관계가 연결되는 것을 의미합니다.
+
+topic에 참여하는 것은 세션이 topic에서 제공하는 콘텐츠를 소비하는 것을 의미합니다. 서버는 context에 따라 구독과 가입/연결을 자동으로 구분합니다. 만약 사용자가 topic과 관련이 없을 경우, 서버는 사용자를 해당 topic을 구독시키고 현재 세션을 topic에 연결합니다. 만약 사용자가 topic과 관련이 있을 경우, 세션을 topic에 연결하기만 합니다. 구독할 때, 서버는 사용자의 접근 권한과 topic의 접근 제어목록을 비교하여 접근을 허용 또는 거부할 수 있으며, topic 관리자에게 접근 승인을 요청할 수 있습니다.
+
+서버는 ~{sub}~ 패킷에 대한 응답값으로 ~{ctrl}~ 을 반환합니다.
+
+~{sub}~ 메세지는 ~{get}~, ~{set}~ 메세지에 각각 대응하는 ~{get}~, ~{set}~ 필드를 포함할 수 있습니다. 포함된 경우 서버는 동일한 이 후 동일한 topic에 대한 subsequent는 동일한 ~{set}~, ~{get}~ 메세지로 처리됩니다. 응답값에는 ~{meta}~, ~{data}~ 메세지가 포함될 수 있습니다.
+
+#+BEGIN_SRC
+sub: {
+  id: "1a2b3",  // string, client-provided message id, optional
+  topic: "me",  // topic to be subscribed or attached to
+  bkg: true,    // request to attach to topic is issued by an automated agent, server should delay sending
+                // presence notifications because the agent is expected to disconnect very quickly
+  // Object with topic initialisation data, new topics & new
+  // subscriptions only, mirrors {set} message
+  set: {
+  // New topic parameters, mirrors {set desc}
+    desc: {
+      defacs: {
+        auth: "JRWS", // string, default access for new authenticated subscribers
+        anon: "N"    // string, default access for new anonymous (un-authenticated)
+                     // subscribers
+      }, // Default access mode for the new topic
+      public: { ... }, // application-defined payload to describe topic
+      private: { ... } // per-user private application-defined content
+    }, // object, optional
+
+    // Subscription parameters, mirrors {set sub}. 'sub.user' must be blank
+    sub: {
+      mode: "JRWS", // string, requested access mode, optional;
+                   // default: server-defined
+    }, // object, optional
+
+    tags: [ // array of strings, update to tags (see fnd topic description), optional.
+        "email:alice@example.com", "tel:1234567890"
+    ],
+
+    cred: { // update to credentials, optional.
+      meth: "email", // string, verification method, e.g. "email", "tel", "recaptcha", etc.
+      val: "alice@example.com", // string, credential to verify such as email or phone
+      resp: "178307", // string, verification response, optional
+      params: { ... } // parameters, specific to the verification method, optional
+    }
+  },
+
+  get: {
+    // Metadata to request from the topic; space-separated list, valid strings
+    // are "desc", "sub", "data", "tags"; default: request nothing; unknown strings are
+    // ignored; see {get  what} for details
+    what: "desc sub data", // string, optional
+
+    // Optional parameters for {get what="desc"}
+    desc: {
+      ims: "2015-10-06T18:07:30.038Z" // timestamp, "if modified since" - return
+              // public and private values only if at least one of them has been
+              // updated after the stated timestamp, optional
+
+    },
+
+    // Optional parameters for {get what="sub"}
+    sub: {
+      ims: "2015-10-06T18:07:30.038Z", // timestamp, "if modified since" - return
+              // public and private values only if at least one of them has been
+              // updated after the stated timestamp, optional
+    user: "usr2il9suCbuko", // string, return results for a single user,
+                            // any topic other than 'me', optional
+    topic: "usr2il9suCbuko", // string, return results for a single topic,
+                            // 'me' topic only, optional
+      limit: 20 // integer, limit the number of returned objects
+    },
+
+    // Optional parameters for {get what="data"}, see {get what="data"} for details
+    data: {
+      since: 123, // integer, load messages with server-issued IDs greater or equal
+            // to this (inclusive/closed), optional
+      before: 321, // integer, load messages with server-issued sequential IDs less
+            // than this (exclusive/open), optional
+      limit: 20, // integer, limit the number of returned objects,
+                 // default: 32, optional
+    } // object, optional
+  }
+}
+#+END_SRC
+
+[[#Public and Private Fields][Public and Private Fields]] 섹션을 참고하여 ~private~ 와 ~public~ 필드 구성방법을 확인하세요.
+
 *** ~{leave}~
+
+~{sub}~ 메세지에 대응하는 메세지입니다. 이 메세지는 아래와 같은 두가지 기능을 제공합니다.
+
++ 구독취소 없이 topic을 탈퇴합니다(~unsub=false~).
++ 구독을 취소합니다(~unsub=true~).
+
+서버는 ~{leave}~ 패킷에 대한 응답값으로 ~{ctrl}~ 을 반환합니다. 구독취소 없이 topic을 탈퇴할 경우 현재 세션에서만 구독취소가 됩니다. 구독취소를 포함해서 탈퇴할 경우 사용자의 모든 세션에서 탈퇴가 이루어집니다.
+
+#+BEGIN_SRC
+leave: {
+  id: "1a2b3",  // string, client-provided message id, optional
+  topic: "grp1XUtEhjv6HND",   // string, topic to leave, unsubscribe, or
+                              // delete, required
+  unsub: true // boolean, leave and unsubscribe, optional, default: false
+}
+#+END_SRC
+	
 *** ~{pub}~
+:PROPERTIES:
+:CUSTOM_ID: pub
+:END:	
+
+topic의 구독자들에게 콘텐츠를 발송하는 메세지입니다.
+
+#+BEGIN_SRC
+pub: {
+  id: "1a2b3", // string, client-provided message id, optional
+  topic: "grp1XUtEhjv6HND", // string, topic to publish to, required
+  noecho: false, // boolean, suppress echo (see below), optional
+  head: { key: "value", ... }, // set of string key-value pairs,
+               // passed to {data} unchanged, optional
+  content: { ... }  // object, application-defined content to publish
+               // to topic subscribers, required
+}
+#+END_SRC
+
+topic 구독자들은 ~content~ 가 포함된 [[#data][~{data}~]] 패킷을 수신합니다. 기본적으로 원래 세션은 현재 topic에 연결된 다른 세션과 마찬가지로 ~{data}~ 의 사본을 가져옵니다. 세션이 방금 발송한 메세지의 복사본을 받지 않으려면 ~noecho~ 값을 ~true~ 로 설정합니다.
+
+[[#Format of Content][Format of Content]] 섹션을 참고하여 ~content~ 필드 구성방법을 확인하세요.
+
+다음 목록은 ~head~ 필드를 위해 정의된 내용들입니다.
+
++ ~attachments~: 이 메세지에 포함된 미디어의 경로를 나타냅니다: ~["/v0/file/s/sJOD_tZDPz0.jpg"]~
++ ~auto~: 챗봇이나 자동 응답기처럼 자동으로 발송된 메세지의 경우 ~true~ 값이 할당됩니다.
++ ~forwarded~: 해당 메세지가 포워딩 된 메세지인지 여부를 나타냅니다. 원본 메세지의 고유 ID값이 할당됩니다: ~"grp1XUtEhjv6HND:123"~
++ ~hashtags~: 해시태그 목록을 ~#~ 기호없이 나타냅니다: ~["onehash", "twohash"]~
++ ~mentions~: 언급하려는 사용자의 고유 아이디(~@alice~)들을 나타냅니다(~~).
++ ~mime~: 메세지 내용의 MIME-type을 나타냅니다(~"text/x-drafty"~). null값이거나 해당 값이 누락됐을 경우엔 ~"text/plain"~ 값으로 간주합니다.
++ ~priority~: 메세지 표시 우선 순위를 나타냅니다. 메세지가 일정 시간동안 더 눈에 띄게 표시되어야 한다는 내용을 나타냅니다. 현재는 ~"high"~ 값만 정의되어 있는 상태입니다(~{"level": "high", "expires": "2019-10-06T18:07:30.038Z"}~). ~priority~ 값은 topic 소유자 또는 관리자(~A~ permission)만 설정할 수 있습니다. ~"expires"~ 값은 옵션입니다.
++ ~replace~: 다른 메세지를 수정/대체하는 메세지인지 여부를 나타냅니다. 수정/대체하고자 하는 메세지의topic 고유의 아이디를 나타냅니다: ~":123"~
++ ~reply~: 다른 메세지에 대한 리플 여부를 나타냅니다. 원본 메세지의 고유 ID값을 나타냅니다:~"grp1XUtEhjv6HND:123"~
++ ~sender~: 서버가 해당 메세지를 전송할 때 원본 메세지를 발송한 사람의 고유 아이디 값을 나타냅니다: ~"usr1XUtEhjv6HND"~
++ ~thread~: an indicator that the message is a part of a conversation thread, a topic-unique ID of the first message in the thread, ~":123"~; ~thread~ is intended for tagging a flat list of messages as opposite to a creating a tree.
+
+어플리케이션 별 필드는 ~x-<application-name>~ 로 시작해야 합니다. 서버는 아직 이 규칙을 적용하지 않지만 향 후 이 규칙이 적용될 수 있습니다.
+
+메세지의 고유 아이디는 가능하다면 ~"grp1XUtEhjv6HND:123"~ 처럼 반드시 ~<topic_name>:<seqId>~ 형식으로 시작해야 합니다. 만약 ~":123"~ 처럼 topic을 누락했다면 현재 topic으로 간주합니다.
+
 *** ~{get}~
+
+설명, 구독자 목록 또는 쿼리 메세지 기록같은 메타데이터에 대한 쿼리 topic입니다. 전체 응답을 받으려면 요청하는 사용자가 [[#sub][구독하고 topic에 소속]]되어 있어야 합니다. 일부 제한된 ~desc~, ~sub~ 정보의 경우엔 소속되어 있지 않아도 조회할 수 있습니다.
+
+#+BEGIN_SRC
+get: {
+  id: "1a2b3", // string, client-provided message id, optional
+  topic: "grp1XUtEhjv6HND", // string, name of topic to request data from
+  what: "sub desc data del cred", // string, space-separated list of parameters to query;
+                        // unknown values are ignored; required
+
+  // Optional parameters for {get what="desc"}
+  desc: {
+    ims: "2015-10-06T18:07:30.038Z" // timestamp, "if modified since" - return
+          // public and private values only if at least one of them has been
+          // updated after the stated timestamp, optional
+  },
+
+  // Optional parameters for {get what="sub"}
+  sub: {
+    ims: "2015-10-06T18:07:30.038Z", // timestamp, "if modified since" - return
+          // public and private values only if at least one of them has been
+          // updated after the stated timestamp, optional
+    user: "usr2il9suCbuko", // string, return results for a single user,
+                          // any topic other than 'me', optional
+    topic: "usr2il9suCbuko", // string, return results for a single topic,
+                           // 'me' topic only, optional
+    limit: 20 // integer, limit the number of returned objects
+  },
+
+  // Optional parameters for {get what="data"}
+  data: {
+    since: 123, // integer, load messages with server-issued IDs greater or equal
+                // to this (inclusive/closed), optional
+    before: 321, // integer, load messages with server-issed sequential IDs less
+               // than this (exclusive/open), optional
+    limit: 20, // integer, limit the number of returned objects, default: 32,
+               // optional
+  },
+
+  // Optional parameters for {get what="del"}
+  del: {
+    since: 5, // integer, load deleted ranges with the delete transaction IDs greater
+              // or equal to this (inclusive/closed), optional
+    before: 12, // integer, load deleted ranges with the delete transaction IDs less
+                // than this (exclusive/open), optional
+    limit: 25, // integer, limit the number of returned objects, default: 32,
+               // optional
+  }
+}
+#+END_SRC
+
++ ~{get what="desc"}~
+쿼리 topic에 대해 설명합니다. 서버는 ~{meta}~ 메세지에 요청한 데이터를 첨부하여 반환합니다. 자세한 내용은 ~{meta}~ 데이터를 참고하세요. ~ims~ 값이 정의되어 있고 데이터가 업데이트 되지 않았다면, 메세지는 ~public~, ~private~ 필드를 생략합니다.
+
+제한된 정보는 topic에 [[#sub][소속]]되어 있지 않아도 가능합니다.
+
+[[#Public and Private Fields][Public and Private Fields]] 섹션을 참고하여 ~private~ 와 ~public~ 필드 구성방법을 확인하세요.
++ ~{get what="sub"}~
+구독중인 사용자 목록을 요청합니다. 서버는 ~{meta}~ 메세지에 요청한 구독중인 사용자 목록을 첨부하여 반환합니다. 자세한 내용은 ~{meta}~ 데이터를 참고하세요. ~me~ topic에 이 쿼리를 전송할 경우엔 내가 구독하고 있는 목록을 반환합니다. ~ims~ 값이 정의되어 있고 데이터가 업데이트 되지 않았다면, 메세지는 ~{ctrl}~ 패킷에 "not modified"를 포함한 메세지를 반환합니다.
+
+topic에 [[#sub][소속]]되지 않고 사용자의 구독 목록만을 반환합니다.
+
++ ~{get what="tags"}~
+인덱싱 된 태그들을 요청합니다. 서버는 ~{meta}~ 메세지에 태그 문자열 목록을 첨부하여 반환합니다. 자세한 내용은 ~{meta}~, ~{fnd}~ topic을 참고하세요. ~me~ 와 group topic만 지원합니다.
+
++ ~{get what="data"}~
+메세지 기록을 요청합니다. 서버는 전달받은 쿼리의 ~data~ 필드값과 동일한 메세지들은 ~{data}~ 패킷에 담아 반환합니다. 데이터 메세지의 ~id~ 필드는 데이터 메세지의 일반 필드이므로 제공되지 않습니다. 모든 ~{data}~ 패킷 전송이 완료되면 ~{ctrl}~ 메세지가 전송됩니다.
+
++ ~{get what="del"}~
+기록을 지웁니다. 서버는 ~{meta}~ 메세지에 메세지 삭제 범위를 첨부하여 반환합니다.
+
++ ~{get what="cred"}~
+
+Query [[#credentail-validation][credentials]]. 서버는 ~{meta}~ 메세지에 인증 목록을 첨부하여 반환합니다. ~me~ topic만 지원합니다.
+
 *** ~{set}~
+topic의 메타데이터 수정, 또는 메세지나 topic을 삭제합니다. 요청하는 사용자는 일반적으로 topic을 [[#sub][구독하고 소속]]되어 있어야 합니다. ~desc.private~ 와 요청한 사용자의 ~sub.mode~ 값만 구독하지 않고도 수정할 수 있습니다.
+
+#+BEGIN_SRC
+set: {
+  id: "1a2b3", // string, client-provided message id, optional
+  topic: "grp1XUtEhjv6HND", // string, name of topic to update, required
+
+  // Optional payload to update topic description
+  desc: {
+    defacs: { // new default access mode
+      auth: "JRWP",  // access permissions for authenticated users
+      anon: "JRW" // access permissions for anonymous users
+    },
+    public: { ... }, // application-defined payload to describe topic
+    private: { ... } // per-user private application-defined content
+  },
+
+  // Optional payload to update subscription(s)
+  sub: {
+    user: "usr2il9suCbuko", // string, user affected by this request;
+                            // default (empty) means current user
+    mode: "JRWP" // string, access mode change, either given ('user'
+                 // is defined) or requested ('user' undefined)
+  }, // object, payload for what == "sub"
+
+  // Optional update to tags (see fnd topic description)
+  tags: [ // array of strings
+    "email:alice@example.com", "tel:1234567890"
+  ],
+
+  cred: { // Optional update to credentials.
+    meth: "email", // string, verification method, e.g. "email", "tel", "recaptcha", etc.
+    val: "alice@example.com", // string, credential to verify such as email or phone
+    resp: "178307", // string, verification response, optional
+    params: { ... } // parameters, specific to the verification method, optional
+  }
+}
+#+END_SRC
+	
 *** ~{del}~
+메세지, 구독, topic, 사용자 등등을 삭제할 수 있습니다.
+
+#+BEGIN_SRC
+del: {
+  id: "1a2b3", // string, client-provided message id, optional
+  topic: "grp1XUtEhjv6HND", // string, topic affected, required for "topic", "sub",
+               // "msg"
+  what: "msg", // string, one of "topic", "sub", "msg", "user", "cred"; what
+               // to delete - the entire topic, a subscription, some or all messages,
+               // a user, a credential; optional, default: "msg"
+  hard: false, // boolean, request to hard-delete vs mark as deleted; in case of
+               // what="msg" delete for all users vs current user only;
+               // optional, default: false
+  delseq: [{low: 123, hi: 125}, {low: 156}], // array of ranges of message IDs
+               // to delete, inclusive-exclusive, i.e. [low, hi), optional
+  user: "usr2il9suCbuko" // string, user being deleted (what="user") or whose
+               // subscription is being deleted (what="sub"), optional
+  cred: { // credential to delete ('me' topic only).
+    meth: "email", // string, verification method, e.g. "email", "tel", etc.
+    val: "alice@example.com" // string, credential being deleted
+  }
+}
+#+END_SRC
+
++ ~what="msg"~
+사용자는 soft-delete(~hard=false~: 기본값) 또는 hard-delete(~hard=true~) 형태로 메세지를 삭제할 수 있습니다. soft-delete는 요청한 사용자에게는 삭제되겠지만 스토리지에는 여전히 데이터가 남아있습니다. soft-delete를 하기 위해서는 ~R~ 권한이 필요합니다. hard-delete는 메세지가 남아있는 모든 스토리지(~head~, ~content~)에서 메세지가 삭제됩니다. 이는 모든 사용자가 영향을 받습니다. hard-delete를 하기 위해서는 ~D~ 권한이 필요합니다. 메세지는 ~delseq~ 파라메터를 이용해 한 건 또는 여러 건을 한번에 삭제할 수 있습니다. 각 삭제 동작에는 각각의 고유한 ~delete ID~ 가 할당됩니다. The greatest ~delete ID~ is reported back in the ~clear~ of the ~{meta}~ message.
+
++ ~what="sub"~
+구독을 삭제하면 topic 구독자에서 지정된 사용자가 삭제됩니다. 이 동작은 ~A~ 권한이 필요합니다. 사용자는 자기 자신의 구독을 삭제할 수 없습니다. 대신에 ~{leave}~ 를 사용하세요. 구독을 soft-delete(기본값) 했다면, 실제 데이터베이스에서 레코드를 삭제하지 않고 삭제된 것으로 표시됩니다.
+
++ ~what="topic"~
+topic과 topic에 포함된 모든 구독 및 메세지를 삭제합니다. topic의 소유자만 삭제할 수 있습니다.
+
++ ~what="user"~
+사용자 삭제는 매우 무거운 작업입니다. 주의하세요.
+
++ ~what="cred"~
+인증정보를 삭제합니다. 유효한 인증정보와 인증 시도가 없는 인증정보는 삭제됩니다. 유효하지 않은 인증정보는 일시 삭제되어 같은 사용자가 재사용 할 수 없습니다.
+
 *** ~{note}~
-** Server to Client Messages 
+
+topic에 소속된 다른 클라이언트에게 전송 확인, 타이핑 알림같은 정보를 전달하기 위해 클라이언트에서 생성된 임시 알림입니다. 이 메세지는 "fire and forget" 방식으로써, 디스크에 기록되지 않고 서버가 인증해주지도 않습니다. 유효하지 않은 것으로 간주되는 메세지는 자동으로 삭제됩니다. ~{note.recv}~ 및 ~{note.read}~ 는 서버의 영구 상태를 변경합니다. 데이터는 ~{meta.sub}~ 메세지의 해당 필드에 저장 및 기독됩니다.
+
+#+BEGIN_SRC
+note: {
+  topic: "grp1XUtEhjv6HND", // string, topic to notify, required
+  what: "kp", // string, one of "kp" (key press), "read" (read notification),
+              // "rcpt" (received notification), any other string will cause
+              // message to be silently ignored, required
+  seq: 123,   // integer, ID of the message being acknowledged, required for
+              // rcpt & read
+  unread: 10  // integer, client-reported total count of unread messages, optional.
+}
+#+END_SRC
+
+현재 인식되는 값들은 아래와 같습니다.
++ kp: key press, 타이핑 알림을 의미합니다. 현재 사용자가 새 메세지를 작성하고 있음을 의미합니다.
++ recv: 클라이언트 소프트웨어가 ~{data}~ 메세지를 수신하였지만 사용자가 아직 읽지 않은 상태를 의미합니다.
++ read: 사용자가 ~{data}~ 메세지를 읽었음을 의미합니다. ~recv~ 를 포함하고 있습니다.
+
+~read~, ~recv~ 알림은 클라이언트가 아직 읽지 않은 메세지의 총 갯수를 나타내는 ~unread~ 필드를 포함할 수 있습니다. 각 사용자별 ~unread~ 갯수는 서버가 결정합니다. 이 갯수는 새 ~{data}~ 메세지가 사용자에게 전송될 때 증가하고 ~{note unread=...}~ 메세지에서 전송한 값으로 재설정됩니다. ~unread~ 값은 절대 서버에 의해서 줄어들지 않습니다. 이 값은 iOS에서 알림 뱃지를 표시하기 위한 푸시 알림에 포함됩니다.
+
+** Server to Client Messages
+
+특정 요청에 대한 응답으로 생성된 세션에 대한 메세지에는 원래 메세지의 ID와 동일한 ~id~ 필드가 포함됩니다. 이 ~id~ 는 서버에서 읽지 않습니다.
+
+서버에서 클라이언트로 전송하는 대부분의 메세지에는 서버에서 메세지를 생성한 시간을 담고있는 ~ts~ 필드가 존재합니다.
+   
 *** ~{data}~
+:PROPERTIES:
+:CUSTOM_ID: data
+:END:
+
+topic에 있는 콘텐츠를 발송합니다. 이 메세지들은 데이터베이스에 유지되는 유일한 메세지입니다. ~{data}~ 메세지들은 topic에 ~R~ 권한이 있는 모든 구독자들에게 전송됩니다.
+
+#+BEGIN_SRC
+data: {
+  topic: "grp1XUtEhjv6HND", // string, topic which distributed this message,
+                            // always present
+  from: "usr2il9suCbuko", // string, id of the user who published the
+                          // message; could be missing if the message was
+                          // generated by the server
+  head: { key: "value", ... }, // set of string key-value pairs, passed
+                               // unchanged from {pub}, optional
+  ts: "2015-10-06T18:07:30.038Z", // string, timestamp
+  seq: 123, // integer, server-issued sequential ID
+  content: { ... } // object, application-defined content exactly as published
+              // by the user in the {pub} message
+}
+#+END_SRC
+
+Data 메세지들은 서버에서 생성한 numeric ID를 가지고 있는 ~seq~ 필드를 포함하고 있습니다. 이 ID들은 각 topic별로 고유한 숫자들입니다. ID들은 각 topic별로 [[#pub][~{pub}~]] 메세지가 성공적으로 전송될 경우 1부터 1씩 증가합니다.
+
+[[#Format of Content][Format of Content]] 섹션을 참고하여 ~content~ 필드 구성방법을 확인하세요.
+
+~head~ 필드에 사용할 수 있는 값들에 대해 알고 싶다면 [[#pub][~{pub}~]] 메세지를 확인하세요.
+
 *** ~{ctrl}~
+
+에러 또는 성공 조건을 나타내는 일반적인 응답입니다. 메세지는 원본 세션으로 전송됩니다.
+
+#+BEGIN_SRC
+ctrl: {
+  id: "1a2b3", // string, client-provided message id, optional
+  topic: "grp1XUtEhjv6HND", // string, topic name, if this is a response in context
+                            // of a topic, optional
+  code: 200, // integer, code indicating success or failure of the request, follows
+             // the HTTP status codes model, always present
+  text: "OK", // string, text with more details about the result, always present
+  params: { ... }, // object, generic response parameters, context-dependent,
+                   // optional
+  ts: "2015-10-06T18:07:30.038Z", // string, timestamp
+}
+#+END_SRC
+
 *** ~{meta}~
+
+topic이나 구독자에 대한 메타데이터 정보로써, ~{get}~, ~{set}~ 또는 ~{sub}~ 메세지의 응답으로 원본 세션으로 전송됩니다.
+
+#+BEGIN_SRC
+meta: {
+  id: "1a2b3", // string, client-provided message id, optional
+  topic: "grp1XUtEhjv6HND", // string, topic name, if this is a response in
+                            // context of a topic, optional
+  ts: "2015-10-06T18:07:30.038Z", // string, timestamp
+  desc: {
+    created: "2015-10-24T10:26:09.716Z",
+    updated: "2015-10-24T10:26:09.716Z",
+    status: "ok", // account status; included for `me` topic only, and only if
+                  // the request is sent by a root-authenticated session.
+    defacs: { // topic's default access permissions; present only if the current
+              //user has 'S' permission
+      auth: "JRWP", // default access for authenticated users
+      anon: "N" // default access for anonymous users
+    },
+    acs: {  // user's actual access permissions
+      want: "JRWP", // string, requested access permission
+      given: "JRWP", // string, granted access permission
+    mode: "JRWP" // string, combination of want and given
+    },
+    seq: 123, // integer, server-issued id of the last {data} message
+    read: 112, // integer, ID of the message user claims through {note} message
+              // to have read, optional
+    recv: 115, // integer, like 'read', but received, optional
+    clear: 12, // integer, in case some messages were deleted, the greatest ID
+               // of a deleted message, optional
+    public: { ... }, // application-defined data that's available to all topic
+                     // subscribers
+    private: { ...} // application-defined data that's available to the current
+                    // user only
+  }, // object, topic description, optional
+  sub:  [ // array of objects, topic subscribers or user's subscriptions, optional
+    {
+      user: "usr2il9suCbuko", // string, ID of the user this subscription
+                            // describes, absent when querying 'me'.
+      updated: "2015-10-24T10:26:09.716Z", // timestamp of the last change in the
+                                           // subscription, present only for
+                                           // requester's own subscriptions
+      touched: "2017-11-02T09:13:55.530Z", // timestamp of the last message in the
+                                           // topic (may also include other events
+                                           // in the future, such as new subscribers)
+      acs: {  // user's access permissions
+        want: "JRWP", // string, requested access permission, present for user's own
+              // subscriptions and when the requester is topic's manager or owner
+        given: "JRWP", // string, granted access permission, optional exactly as 'want'
+        mode: "JRWP" // string, combination of want and given
+      },
+      read: 112, // integer, ID of the message user claims through {note} message
+                 // to have read, optional.
+      recv: 315, // integer, like 'read', but received, optional.
+      clear: 12, // integer, in case some messages were deleted, the greatest ID
+                 // of a deleted message, optional.
+      public: { ... }, // application-defined user's 'public' object, absent when
+                       // querying P2P topics.
+      private: { ... } // application-defined user's 'private' object.
+      online: true, // boolean, current online status of the user; if this is a
+                    // group or a p2p topic, it's user's online status in the topic,
+                    // i.e. if the user is attached and listening to messages; if this
+                    // is a response to a 'me' query, it tells if the topic is
+                    // online; p2p is considered online if the other party is
+                    // online, not necessarily attached to topic; a group topic
+                    // is considered online if it has at least one active
+                    // subscriber.
+
+      // The following fields are present only when querying 'me' topic
+
+      topic: "grp1XUtEhjv6HND", // string, topic this subscription describes
+      seq: 321, // integer, server-issued id of the last {data} message
+
+      // The following field is present only when querying 'me' topic and the
+      // topic described is a P2P topic
+      seen: { // object, if this is a P2P topic, info on when the peer was last
+              //online
+        when: "2015-10-24T10:26:09.716Z", // timestamp
+        ua: "Tinode/1.0 (Android 5.1)" // string, user agent of peer's client
+      }
+    },
+    ...
+  ],
+  tags: [ // array of tags that the topic or user (in case of "me" topic) is indexed by
+    "email:alice@example.com", "tel:+1234567890"
+  ],
+  cred: [ // array of user's credentials
+    {
+      meth: "email", // string, validation method
+      val: "alice@example.com", // string, credential value
+      done: true     // validation status
+    },
+    ...
+  ],
+  del: {
+    clear: 3, // ID of the latest applicable 'delete' transaction
+    delseq: [{low: 15}, {low: 22, hi: 28}, ...], // ranges of IDs of deleted messages
+  }
+}
+#+END_SRC
+	
 *** ~{pres}~
+
+Tinode는 중요한 이벤트를 알릴 때 ~{pres}~ 메세지를 사용합니다. [[https://docs.google.com/spreadsheets/d/e/2PACX-1vStUDHb7DPrD8tF5eANLu4YIjRkqta8KOhLvcj2precsjqR40eDHvJnnuuS3bw-NcWsP1QKc7GSTYuX/pubhtml?gid=1959642482&single=true][별도의 문서]]에서 가능한 모든 사용 사례를 설명합니다.
+
+#+BEGIN_SRC
+pres: {
+  topic: "me", // string, topic which receives the notification, always present
+  src: "grp1XUtEhjv6HND", // string, topic or user affected by the change, always present
+  what: "on", // string, what's changed, always present
+  seq: 123, // integer, "what" is "msg", a server-issued ID of the message,
+            // optional
+  clear: 15, // integer, "what" is "del", an update to the delete transaction ID.
+  delseq: [{low: 123}, {low: 126, hi: 136}], // array of ranges, "what" is "del",
+             // ranges of IDs of deleted messages, optional
+  ua: "Tinode/1.0 (Android 2.2)", // string, a User Agent string identifying client
+             // software if "what" is "on" or "ua", optional
+  act: "usr2il9suCbuko",  // string, user who performed the action, optional
+  tgt: "usrRkDVe0PYDOo",  // string, user affected by the action, optional
+  acs: {want: "+AS-D", given: "+S"} // object, changes to access mode, "what" is "acs",
+                          // optional
+}
+#+END_SRC
+
+~{pres}~ 메세지는 아주 일시적입니다. 메세지는 저장되지 않으며 일시적으로 사용할 수 없을 경우 나중에 재전송을 시도하지 않습니다.
+
 *** ~{info}~
+
+클라이언트에서 생성한 ~{note}~ 알림입니다. 서버는 메세지가 규격을 준수하고 ~topic~ 과 ~form~ 필드의 내용이 정확함을 보장합니다. The other content is copied from the ~{note}~ message verbatim and may potentially be incorrect or misleading if the originator so desires.
+
+
+#+BEGIN_SRC
+info: {
+  topic: "grp1XUtEhjv6HND", // string, topic affected, always present
+  from: "usr2il9suCbuko", // string, id of the user who published the
+                          // message, always present
+  what: "read", // string, one of "kp", "recv", "read", see client-side {note},
+                // always present
+  seq: 123, // integer, ID of the message that client has acknowledged,
+            // guaranteed 0 < read <= recv <= {ctrl.params.seq}; present for rcpt &
+            // read
+}
+#+END_SRC
