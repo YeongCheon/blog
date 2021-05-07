@@ -1,7 +1,7 @@
 #+TITLE: 코로나 방문자 수기명부 개인정보 수집제공 동의서 양식
 #+SUBTITLE: 코로나 방문자 수기명부 개인정보 수집제공 동의서
 #+AUTHOR: yeongcheon
-#+DATE: <2021-05-21 금 16:00>
+#+DATE: <2021-05-07 금 16:00>
 #+TAGS[]: 코로나 covid
 #+DRAFT: false
 
