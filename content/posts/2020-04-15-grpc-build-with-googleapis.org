@@ -42,15 +42,16 @@
   이제부터 이 에러를 고쳐봅시다.
 * FIX
   에러 메세지가 아주 명료하니 긴 말 하지말고 바로 방법을 알아보죠.
-** grpc-gateway Download
-   우선 grpc-gateway 프로젝트를 git clone 명령어를 이용해 원하는 위치에 다운받습니다.
+** googleapis Download
+   우선 googleapis 프로젝트를 git clone 명령어를 이용해 원하는 위치에 다운받습니다. 저같은 경우엔 해당 프로젝트의 하위 폴더에 submodule 형태로 내려받았습니다.
    #+BEGIN_SRC
-   git clone https://github.com/grpc-ecosystem/grpc-gateway
+   git clone https://github.com/googleapis/googleapis.git
    #+END_SRC
+   
 ** fix compile command
-   컴파일 명령어에 위에서 내려받은 grpc-gateway 프로젝트의 ~third_party/googleapis~ 경로를 추가해줍니다.
+   컴파일 명령어에 위에서 내려받은 googleapis 프로젝트의 경로를 추가해줍니다.
    #+BEGIN_SRC
-   protoc -I. -I./grpc-gateway/third_party/googleapis/ --go_out=plugins=grpc:. myService.proto
+   protoc -I. -I./googleapis/googleapis/ --go_out=plugins=grpc:. myService.proto
    #+END_SRC
    
    그럼 이제 정상적으로 컴파일이 완료되는걸 확인할 수 있습니다.
