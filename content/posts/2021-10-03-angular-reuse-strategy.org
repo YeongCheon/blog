@@ -60,11 +60,11 @@ const routes: Routes = [
     },
   },
   {
-    path: '/items',
+    path: '/items/:itemId',
     pathMatch: 'full',
-    component: ItemListComponent,
+    component: ItemDetailComponent,
     data: {
-      isReuse: true  // isReuse가 true일 경우에만 RouteReuseStrategy에서 재사용됩니다.
+      isReuse: false  // isReuse가 true일 경우에만 RouteReuseStrategy에서 재사용됩니다.
     }
   }
 ];
