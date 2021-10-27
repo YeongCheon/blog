@@ -1,6 +1,6 @@
 #+TITLE: angular route reuse strategy
-#+SUBTITLE: 
-#+LAYOUT: Angular의 RouteReuseStrategy가 어떻게 동작하는지 알아봅니다.
+#+SUBTITLE: Angular의 RouteReuseStrategy가 어떻게 동작하는지 알아봅니다.
+#+LAYOUT: post
 #+AUTHOR: yeongcheon
 #+DATE: <2021-10-03 일>
 #+TAGS[]: angular router RouteReuseStrategy
