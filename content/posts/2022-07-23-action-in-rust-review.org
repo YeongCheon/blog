@@ -4,7 +4,7 @@
 #+EMAIL: kyc1682@gmail.com
 #+DATE: <2022-07-23 토>
 #+LANGUAGE: ko
-#+TAGS[]: rust
+#+TAGS[]: rust 러스트
 #+DRAFT: false
 
 #+BEGIN_CENTER
