@@ -3,7 +3,6 @@
 #+AUTHOR: yeongcheon
 #+DATE: 2020-05-22 23:00:00 +0900
 #+TAGS[]: hugo emacs org-mode latex
-#+MATH: true
 #+DRAFT: false
 
 이 글은 [[https://themes.gohugo.io/theme/hugo-coder/post/math-typesetting.html][여기]][[https://emacs.stackexchange.com/questions/2650/how-should-i-write-inline-equations-in-org-mode-so-they-export-to-latex-properly][저기]]를 참고해서 작성되었습니다.
@@ -27,11 +26,6 @@
    {{ if or .Params.math .Site.Params.math }}
    {{ partial "math.html" . }}
    {{ end }}
-   #+END_SRC
-
-   사이트 전체 설정(~config.toml~)에서 *math* 파라메터가 true이거나 또는 각 문서에서 *math* 파라메터가 true일 경우에 우리가 이전 단계에서 작성한 math.html 파일을 불러오겠다는 코드입니다. 수식이 자주 등장하는 사이트는 ~config.toml~ 에서 true 지정하는 게 편하겠지만 수식이 일부 문서에서만 등장하는 사이트의 경우엔 각 문서 설정에서 math 파라메터를 true로 지정하는 게 좋아요. 참고로 이 문서에 사용된 설정은 아래와 같습니다.
-   #+BEGIN_SRC html
-     #+MATH: true
    #+END_SRC
 * 실제로 사용해보기
 ** 수식 작성법

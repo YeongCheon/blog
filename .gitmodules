@@ -14,3 +14,6 @@
 	path = public
 	url = git@github.com:YeongCheon/yeongcheon.github.io.git
 	branch = master
+[submodule "themes/LoveIt"]
+	path = themes/LoveIt
+	url = https://github.com/dillonzq/LoveIt.git

@@ -3,7 +3,6 @@
 #+AUTHOR: yeongcheon
 #+DATE: 2020-05-30 12:00:00 +0900
 #+TAGS[]: grpc golang unary stream interceptor
-#+MATH: false
 #+DRAFT: false
 
 이 문서는 [[https://github.com/grpc/grpc-go/blob/master/examples/features/interceptor/README.md][grpc-go Interceptor 문서]]를 번역한 것입니다(+대부분 번역기 발췌, 작성자는 영어를 되게 못해요+).
