@@ -387,7 +387,7 @@ ignoreErrors = ["error-remote-getjson", "error-missing-instagram-accesstoken"]
       # Disqus comment config
       [params.page.comment.disqus]
         # 
-        enable = true
+        enable = false
         # Disqus shortname to use Disqus in posts
         shortname = "yeongcheon"
       # Gitalk comment config
@@ -422,10 +422,10 @@ ignoreErrors = ["error-remote-getjson", "error-missing-instagram-accesstoken"]
         emoji = ""
       # Facebook comment config
       [params.page.comment.facebook]
-        enable = false
+        enable = true
         width = "100%"
         numPosts = 10
-        appId = ""
+        appId = "563220625586569"
         # automatically adapt the current theme i18n configuration when empty
         languageCode = ""
       #  Telegram comments config
