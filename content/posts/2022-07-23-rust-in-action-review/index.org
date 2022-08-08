@@ -10,6 +10,8 @@ resources:
 - name: "featured-image"
   src: "images/featured-image.jpg"
 tags: ["rust", "러스트"]
+aliases:
+    - /2022-07-23-rust-in-action-review/
 ---
 
 * 서론

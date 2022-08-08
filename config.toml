@@ -595,9 +595,9 @@ ignoreErrors = ["error-remote-getjson", "error-missing-instagram-accesstoken"]
   priority = 0.5
 
 # Permalinks config
-[Permalinks]
-  # posts = ":year/:month/:filename"
-  posts = ":filename"
+# [Permalinks]
+#   # posts = ":year/:month/:filename"
+#   posts = ":filename"
 
 # Privacy config
 [privacy]
