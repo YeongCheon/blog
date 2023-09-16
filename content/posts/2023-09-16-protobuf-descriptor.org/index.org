@@ -1,9 +1,0 @@
-#+TITLE: Descriptor of Protobuf
-#+SUBTITLE: Protobuf의 Descriptor에 대해 알아봅니다.
-#+DATE: <2023-09-16 토>
-#+AUTHOR: yeongcheon
-#+EMAIL: kyc1682@gmail.com
-#+LANGUAGE: ko
-#+TAGS[]: grpc protobuf
-#+DRAFT: false
-
