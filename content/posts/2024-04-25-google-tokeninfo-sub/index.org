@@ -1,0 +1,13 @@
+---
+title: "google ID 토큰 콘텐츠 팁"
+subtitle: "서로 다른 구글 프로젝트에서 동일한 구글 계정을 통해서 인증을 했는지 확인하는 법을 알아봅시다."
+date: "2024-04-25T09:23:00+09:00"
+lastmod: 2024-04-25T09:23:00+09:00
+draft: false
+author: "YeongCheon Kim"
+tags: ["google", "oauth", "jwt"]
+---
+
+[[https://cloud.google.com/docs/authentication/token-types?hl=ko#id-contents][구글의 ID 토큰 콘텐츠]]는 인증한 사용자의 정보를 간단하게 보여줍니다. 이 중 ~sub~ 필드는 인증한 사용자의 고유한 ID 값인데, 이 값은 ~aud~ 필드의 값이 달라도 인증한 계정이 동일한 구글 계정이라면 ~sub~ 필드는 항상 동일한 값을 반환합니다. 심지어 *서로 다른 GCP 프로젝트를 통해 인증해도 동일한 구글 계정이라면 동일한 값을 반환합니다.*
+
+서로 다른 서비스끼리 구글 계정을 매개로 동기화 작업 등을 진행할 때 유용하게 사용할 수 있습니다.
