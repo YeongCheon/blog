@@ -218,7 +218,7 @@ defaultHiddenFromHomePage = false
 [params.social]
 GitHub = "yeongcheon"
 Linkedin = ""
-Twitter = ""
+X = ""
 Instagram = ""
 Facebook = "yeongcheon.kim.3"
 Telegram = ""
@@ -358,7 +358,7 @@ fullscreen = true
 #  social share links in post page
 [params.page.share]
 enable = true
-Twitter = true
+X = true
 Facebook = true
 Linkedin = false
 Whatsapp = false
@@ -604,7 +604,7 @@ priority = 0.5
 #  privacy of the Google Analytics (replaced by params.analytics.google)
 [privacy.googleAnalytics]
 # ...
-[privacy.twitter]
+[privacy.x]
 enableDNT = true
 [privacy.youtube]
 privacyEnhanced = true
