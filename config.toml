@@ -37,6 +37,11 @@ name = "YeongCheon Kim"
 email = "kyc1682@gmail.com"
 link = "https://github.com/yeongcheon"
 
+# Author config (for LoveIt theme)
+[params.author]
+name = "YeongCheon Kim"
+link = "https://github.com/yeongcheon"
+
 # Menu config
 [menu]
 [[menu.main]]
